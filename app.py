@@ -60,9 +60,8 @@ app.register_blueprint(subscribe_bp)
 def home():
     return {"message":"Api Running Successful"}
 
-# with app.app_context(): #with automatically handles and it uses 2 special method start and cleanup
-#     db.create_all() 
-    print("Tables created successfully")
+
+    
 if __name__=="__main__":
     app.run(debug=True)
 
