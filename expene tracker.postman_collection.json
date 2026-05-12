@@ -1,0 +1,986 @@
+{
+  "info": {
+    "_postman_id": "31c28f57-aacb-451b-9b3b-aead32c62fc0",
+    "name": "expene tracker",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53949281",
+    "_collection_link": "https://go.postman.co/collection/53949281-31c28f57-aacb-451b-9b3b-aead32c62fc0?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "register",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3Nzk3NTc4NywianRpIjoiYTk3OWE3NTYtMjAwZS00Yjc5LTkwMGQtMDc1YTFlNThiMjJlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNzc3OTc1Nzg3LCJjc3JmIjoiMDk3ZDc2OTYtMWViYy00ODQzLWI4YzMtYmRhYzEwZjg1Y2QwIiwiZXhwIjoxNzc3OTc2Njg3fQ.vd2Do5Giw7coy-23p6fN0jh-f1nek1JpE0GxxK2ayKc",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"username\": \"jabir_08\",\r\n    \"password\": \"08011973\",\r\n    \"email\": \"jabir@gmail.com\",\r\n    \"mobile_no\": \"9754320521\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/auth/register",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "otp verify",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"mobile_no\":\"9754320521\",\r\n    \"otp\":\"609614\",\r\n    \"type\":\"register\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/otp/verify-otp",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "otp",
+            "verify-otp"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODUxMDU2MywianRpIjoiMzI4MjBlYzktODI0My00Zjg3LWIzNjctNjAwZDc0N2QxMmU0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEwIiwibmJmIjoxNzc4NTEwNTYzLCJjc3JmIjoiMmRmYzMyOTItMTUyZC00OWIwLWFhNzUtZmIzYzdhZjM4NDQ2IiwiZXhwIjoxNzc4NTE0MTYzfQ.HsltD3m2X6FyxRwM0aYHAuXPXbeu5U-blA4OXXqPA_0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"username\": \"jabir_08\",\r\n    \"password\": \"08011973\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/auth/login",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "logout",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODMyNjM3MSwianRpIjoiOGRkNDU0MTMtYTg0Ni00NWFiLTljYjQtZDMyYjZmMDE1MmVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjgiLCJuYmYiOjE3NzgzMjYzNzEsImNzcmYiOiJjNzY2M2RmNS1kZjJmLTQyZTMtYjkwZS04NjA2NTFhMjM5NDgiLCJleHAiOjE3NzgzMjk5NzF9.QCvG7x8GxM3GaTs8S1qPCRVXKP1kNkptNHhuKqsgDeg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3Nzk4NDMwMiwianRpIjoiN2YzOGFjN2QtYmNmNC00NWJhLTg5ODktN2FmNDJhMmVhMzEzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6NSwibmJmIjoxNzc3OTg0MzAyLCJjc3JmIjoiZGQzM2Q0YmEtMDY3OS00NzRjLWJlMjQtYmFlZWZjZWYwMzlmIiwiZXhwIjoxNzc3OTg3OTAyfQ.NY1OKvhXtdpOrdkh0CiAKm0qcmE6Bft50Da-f-FU-bY",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:5000/auth/logout",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Forgot and reset",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"identifier\":\"dawar@gmail.com\",\r\n    \"otp\":\"278788\",\r\n    \"new_password\":\"031203\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/reset-password",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "reset-password"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add expense",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODU1OTI3MywianRpIjoiZmQ2NTA3YzktNmVjYS00YjFjLTk3MDctNTM3ZjEwN2ZiMWVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjExIiwibmJmIjoxNzc4NTU5MjczLCJjc3JmIjoiYzBiNWQ0MGMtOGM0ZS00NzEwLWIxMzItMjI1MzcyNjBiM2I4IiwiZXhwIjoxNzc4NTYyODczfQ.IyXoV83WEiumq55xVyKJAvxcNxgYW6TmeeYPOxrNYpg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"Television\",\r\n  \"amount\": 10000,\r\n  \"category\": \"Drama\",\r\n  \"description\": \"Watching\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/expense",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "expense"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get_exppense",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Update _expense",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODQ3MDkwMSwianRpIjoiMzJmNjUwYmItNzFiYS00OGUzLThkM2ItOWYyMWNlOTk4NzY1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjkiLCJuYmYiOjE3Nzg0NzA5MDEsImNzcmYiOiJmMDA2N2IxMC01ZjU0LTRkYWUtYjE2ZC1iZWRhNzcyOTA0YmYiLCJleHAiOjE3Nzg0NzQ1MDF9.NHgto8pmv0DPVtwfLXv1756owRaDcnj4KoRnFXwh_aI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"amount\":\"95\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/expense/update/9",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "expense",
+            "update",
+            "9"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete expense",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODMyNjM3MSwianRpIjoiOGRkNDU0MTMtYTg0Ni00NWFiLTljYjQtZDMyYjZmMDE1MmVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjgiLCJuYmYiOjE3NzgzMjYzNzEsImNzcmYiOiJjNzY2M2RmNS1kZjJmLTQyZTMtYjkwZS04NjA2NTFhMjM5NDgiLCJleHAiOjE3NzgzMjk5NzF9.QCvG7x8GxM3GaTs8S1qPCRVXKP1kNkptNHhuKqsgDeg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/expense/delete/6",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "expense",
+            "delete",
+            "6"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "add-income",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODU1OTI3MywianRpIjoiZmQ2NTA3YzktNmVjYS00YjFjLTk3MDctNTM3ZjEwN2ZiMWVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjExIiwibmJmIjoxNzc4NTU5MjczLCJjc3JmIjoiYzBiNWQ0MGMtOGM0ZS00NzEwLWIxMzItMjI1MzcyNjBiM2I4IiwiZXhwIjoxNzc4NTYyODczfQ.IyXoV83WEiumq55xVyKJAvxcNxgYW6TmeeYPOxrNYpg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"source\": \"Job\",\r\n  \"amount\":30000 ,\r\n  \"description\": \"Driver\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/income/add",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "income",
+            "add"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get income",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "update-income",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODQ3MDkwMSwianRpIjoiMzJmNjUwYmItNzFiYS00OGUzLThkM2ItOWYyMWNlOTk4NzY1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjkiLCJuYmYiOjE3Nzg0NzA5MDEsImNzcmYiOiJmMDA2N2IxMC01ZjU0LTRkYWUtYjE2ZC1iZWRhNzcyOTA0YmYiLCJleHAiOjE3Nzg0NzQ1MDF9.NHgto8pmv0DPVtwfLXv1756owRaDcnj4KoRnFXwh_aI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"source\": \"Freelancing\",\r\n  \"amount\": 12000,\r\n  \"description\": \"Website project payment\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/income/update/6",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "income",
+            "update",
+            "6"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete income",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODMyNjM3MSwianRpIjoiOGRkNDU0MTMtYTg0Ni00NWFiLTljYjQtZDMyYjZmMDE1MmVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjgiLCJuYmYiOjE3NzgzMjYzNzEsImNzcmYiOiJjNzY2M2RmNS1kZjJmLTQyZTMtYjkwZS04NjA2NTFhMjM5NDgiLCJleHAiOjE3NzgzMjk5NzF9.QCvG7x8GxM3GaTs8S1qPCRVXKP1kNkptNHhuKqsgDeg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/income/delete/4",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "income",
+            "delete",
+            "4"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "dashboard",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "RESEND-OTP",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"mobile_no\": \"9754320521\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/otp/resend-otp",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "otp",
+            "resend-otp"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "category-wise=expense",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "monthly report",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "loan-addition",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODU1OTI3MywianRpIjoiZmQ2NTA3YzktNmVjYS00YjFjLTk3MDctNTM3ZjEwN2ZiMWVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjExIiwibmJmIjoxNzc4NTU5MjczLCJjc3JmIjoiYzBiNWQ0MGMtOGM0ZS00NzEwLWIxMzItMjI1MzcyNjBiM2I4IiwiZXhwIjoxNzc4NTYyODczfQ.IyXoV83WEiumq55xVyKJAvxcNxgYW6TmeeYPOxrNYpg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"loan_name\": \"Bike Loan\",\r\n  \"total_amount\": 50000,\r\n  \"monthly_emi\": 5000,\r\n  \"remaining_amount\": 50000,\r\n  \"due_date\": \"2026-05-20\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/loan",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "loan"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get-all-loans",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "update-loan",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODMyNjM3MSwianRpIjoiOGRkNDU0MTMtYTg0Ni00NWFiLTljYjQtZDMyYjZmMDE1MmVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjgiLCJuYmYiOjE3NzgzMjYzNzEsImNzcmYiOiJjNzY2M2RmNS1kZjJmLTQyZTMtYjkwZS04NjA2NTFhMjM5NDgiLCJleHAiOjE3NzgzMjk5NzF9.QCvG7x8GxM3GaTs8S1qPCRVXKP1kNkptNHhuKqsgDeg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"loan_name\":\"Home Loan\",\r\n      \"total_amount\": 80000,\r\n  \"monthly_emi\": 4000,\r\n  \"remaining_amount\": 52000,\r\n  \"due_date\": \"2026-06-10\"}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/loan/update/4",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "loan",
+            "update",
+            "4"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete loan",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODMyNjM3MSwianRpIjoiOGRkNDU0MTMtYTg0Ni00NWFiLTljYjQtZDMyYjZmMDE1MmVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjgiLCJuYmYiOjE3NzgzMjYzNzEsImNzcmYiOiJjNzY2M2RmNS1kZjJmLTQyZTMtYjkwZS04NjA2NTFhMjM5NDgiLCJleHAiOjE3NzgzMjk5NzF9.QCvG7x8GxM3GaTs8S1qPCRVXKP1kNkptNHhuKqsgDeg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/loan/delete/4",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "loan",
+            "delete",
+            "4"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "repayment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODU1OTI3MywianRpIjoiZmQ2NTA3YzktNmVjYS00YjFjLTk3MDctNTM3ZjEwN2ZiMWVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjExIiwibmJmIjoxNzc4NTU5MjczLCJjc3JmIjoiYzBiNWQ0MGMtOGM0ZS00NzEwLWIxMzItMjI1MzcyNjBiM2I4IiwiZXhwIjoxNzc4NTYyODczfQ.IyXoV83WEiumq55xVyKJAvxcNxgYW6TmeeYPOxrNYpg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"paid_amount\":\"5000\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/loan/repayment/8",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "loan",
+            "repayment",
+            "8"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ai suggestion",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "borrow-add",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODU1OTI3MywianRpIjoiZmQ2NTA3YzktNmVjYS00YjFjLTk3MDctNTM3ZjEwN2ZiMWVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjExIiwibmJmIjoxNzc4NTU5MjczLCJjc3JmIjoiYzBiNWQ0MGMtOGM0ZS00NzEwLWIxMzItMjI1MzcyNjBiM2I4IiwiZXhwIjoxNzc4NTYyODczfQ.IyXoV83WEiumq55xVyKJAvxcNxgYW6TmeeYPOxrNYpg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"person_name\": \"Shuv\",\r\n  \"amount\": 5000,\r\n  \"type\": \"Borrowed\",\r\n  \"due_date\": \"2026-06-20\",\r\n  \"note\": \"Borrowed for Bike\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/borrow/add",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "borrow",
+            "add"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get-borrow/lend",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "update borrow",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODQ3MDkwMSwianRpIjoiMzJmNjUwYmItNzFiYS00OGUzLThkM2ItOWYyMWNlOTk4NzY1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjkiLCJuYmYiOjE3Nzg0NzA5MDEsImNzcmYiOiJmMDA2N2IxMC01ZjU0LTRkYWUtYjE2ZC1iZWRhNzcyOTA0YmYiLCJleHAiOjE3Nzg0NzQ1MDF9.NHgto8pmv0DPVtwfLXv1756owRaDcnj4KoRnFXwh_aI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"amount\":\"1000\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/borrow/update/4",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "borrow",
+            "update",
+            "4"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete borrow",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODM5MDQ0MiwianRpIjoiZDM4ZjE0OTYtNWE1OS00ZmI4LTk1NTEtNDkxN2E3NGM3YjUxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjgiLCJuYmYiOjE3NzgzOTA0NDIsImNzcmYiOiI1MTc5MTA3OC0wNDk0LTRlZDgtOTVlZC1jMmZmMDJmZDViYTEiLCJleHAiOjE3NzgzOTQwNDJ9.hv0j7XkDHRgpqcrd1yK2646UspcPNspD7SzidALdOB8",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/borrow/delete/1",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "borrow",
+            "delete",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "mark-paid",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODU1OTI3MywianRpIjoiZmQ2NTA3YzktNmVjYS00YjFjLTk3MDctNTM3ZjEwN2ZiMWVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjExIiwibmJmIjoxNzc4NTU5MjczLCJjc3JmIjoiYzBiNWQ0MGMtOGM0ZS00NzEwLWIxMzItMjI1MzcyNjBiM2I4IiwiZXhwIjoxNzc4NTYyODczfQ.IyXoV83WEiumq55xVyKJAvxcNxgYW6TmeeYPOxrNYpg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/borrow/mark-paid/6",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "borrow",
+            "mark-paid",
+            "6"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "add-sbscription",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODU1OTI3MywianRpIjoiZmQ2NTA3YzktNmVjYS00YjFjLTk3MDctNTM3ZjEwN2ZiMWVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjExIiwibmJmIjoxNzc4NTU5MjczLCJjc3JmIjoiYzBiNWQ0MGMtOGM0ZS00NzEwLWIxMzItMjI1MzcyNjBiM2I4IiwiZXhwIjoxNzc4NTYyODczfQ.IyXoV83WEiumq55xVyKJAvxcNxgYW6TmeeYPOxrNYpg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"MX player\",\r\n  \"amount\": 499,\r\n  \"billing_cycle\": \"monthly\",\r\n  \"next_billing_date\": \"2026-06-15\",\r\n  \"note\": \"OTT subscription\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/subscription/add",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "subscription",
+            "add"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get-subscription",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "update-subscription",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODQxMTgwNSwianRpIjoiNGNlZjg0N2QtYzQ5ZS00ODEzLWI4MDMtNGQwYTY0ZDBjNGU4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjgiLCJuYmYiOjE3Nzg0MTE4MDUsImNzcmYiOiJhZmE3MDA1OS1mOTg4LTQyZmQtODBkNS1jNjFkNzk0MDE0YWIiLCJleHAiOjE3Nzg0MTU0MDV9.7qzenObur_Yxdyc6XMaChZrXYxSGMrsieHggJsSBxYY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\":\"Amazom Prime Video\"\r\n    \r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:5000/subscription/update/1",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "subscription",
+            "update",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete subscription",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODQxMTgwNSwianRpIjoiNGNlZjg0N2QtYzQ5ZS00ODEzLWI4MDMtNGQwYTY0ZDBjNGU4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjgiLCJuYmYiOjE3Nzg0MTE4MDUsImNzcmYiOiJhZmE3MDA1OS1mOTg4LTQyZmQtODBkNS1jNjFkNzk0MDE0YWIiLCJleHAiOjE3Nzg0MTU0MDV9.7qzenObur_Yxdyc6XMaChZrXYxSGMrsieHggJsSBxYY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:5000/subscription/delete/1",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "5000",
+          "path": [
+            "subscription",
+            "delete",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "upcoming-subscription",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
