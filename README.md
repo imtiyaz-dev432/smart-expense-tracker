@@ -399,6 +399,7 @@ GET /ai/suggestion
 - AI/ML-based expense category prediction
 - Automatic subscription detection
 - Deployment on a cloud platform
+- Improve category system using relational category_id mapping
 
 ---
 
