@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AI Suggestions | Smart Expense Tracker</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="app-page" data-page="ai">
+
+  <div class="background-shapes">
+    <span class="shape shape-one"></span>
+    <span class="shape shape-two"></span>
+    <span class="shape shape-three"></span>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-logo">
+      <div class="logo-box small-logo">₹</div>
+      <h2>SmartTrack</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">
+        <span>📊</span>
+        Dashboard
+      </a>
+
+      <a href="income.html">
+        <span>💰</span>
+        Income
+      </a>
+
+      <a href="expense.html">
+        <span>💳</span>
+        Expense
+      </a>
+
+      <a href="loan.html">
+        <span>🏦</span>
+        Loan
+      </a>
+
+      <a href="borrow.html">
+        <span>🤝</span>
+        Borrow/Lend
+      </a>
+
+      <a href="subscription.html">
+        <span>🔁</span>
+        Subscription
+      </a>
+
+      <a href="ai-suggestions.html" class="active">
+        <span>🤖</span>
+        AI Suggestions
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="logout-btn" id="logoutBtn">
+        Logout
+      </button>
+    </div>
+
+  </aside>
+
+  <main class="dashboard-main">
+
+    <header class="dashboard-topbar">
+
+      <div class="topbar-left">
+        
+
+        <div>
+          <h1>AI Suggestions</h1>
+          <p>Smart financial insights based on your income, expenses and loans.</p>
+        </div>
+      </div>
+
+      
+
+    </header>
+
+    <section class="dashboard-content">
+
+      <div class="summary-grid">
+
+        <div class="summary-card">
+          <div class="summary-icon">🧠</div>
+          <p>Financial Health Score</p>
+          <h2 id="healthScore">-</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon">📊</div>
+          <p>Financial Health</p>
+          <h2 id="financialHealth">-</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon">📉</div>
+          <p>Expense Ratio</p>
+          <h2 id="expenseRatio">-</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon">💰</div>
+          <p>Total Income</p>
+          <h2 id="aiIncome">-</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon">💳</div>
+          <p>Total Expense</p>
+          <h2 id="aiExpense">-</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon">📈</div>
+          <p>Remaining Balance</p>
+          <h2 id="aiBalance">-</h2>
+        </div>
+
+      </div>
+
+      <div class="dashboard-panel">
+
+        <div class="panel-header">
+          <h2>Smart Suggestions</h2>
+        </div>
+
+        <div class="ai-list" id="suggestionList">
+          <p class="empty-text">Loading AI suggestions...</p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

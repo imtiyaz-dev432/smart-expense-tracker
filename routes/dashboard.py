@@ -14,8 +14,8 @@ dashboard_bp=Blueprint("dashboard-bp",__name__)
 @jwt_required()
 def dashboard():
     current_user_id=int(get_jwt_identity())
-    total_income=db.session.query(func.sum(Income.amount)).filter_by(user_id=current_user_id).scalar() #scalar calculate sum of amount directly
-    total_expense=db.session.query(func.sum(Expense.amount)).filter_by(user_id=current_user_id).scalar()
+    total_income=db.session.query(func.sum(Income.amount)).filter_by(user_id=current_user_id).scalar() or 0 #scalar calculate sum of amount directly
+    total_expense=db.session.query(func.sum(Expense.amount)).filter_by(user_id=current_user_id).scalar() or 0
     #user ne dusre ko kitne paise diye hai
     
 #user ne kitne paise dusro se liye hai
@@ -210,6 +210,7 @@ def monthly_report():
             func.extract("month",Borrow.created_at)==current_month,
             func.extract("year",Borrow.created_at)==current_year
         ) .scalar() or 0    
+    
     
     
     if total_borrow!=0 or total_lend!=0:

@@ -24,13 +24,30 @@ from routes.borrow import borrow_bp
 from routes.subscription import subscribe_bp
 from block import BLOCKLIST
 from dotenv import load_dotenv
+from flask_cors import CORS
+from extension import mail
+from utils.otp import send_otp_mail
+
+
 
 load_dotenv()
 app=Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] =os.getenv("DATABASE_URL") 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["JWT_SECRET_KEY"]=os.getenv("JWT_SECRET_KEY")
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=5)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7)
+app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
+app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", 587))
+app.config["MAIL_USE_TLS"] = os.getenv("MAIL_USE_TLS", "True") == "True"
+app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL", "False") == "True"
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+
+
+
+mail.init_app(app)
 db.init_app(app)
 migrate=Migrate(app,db)
 jwt=JWTManager(app)

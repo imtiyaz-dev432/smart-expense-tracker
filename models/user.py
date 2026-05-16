@@ -13,7 +13,7 @@ class User(db.Model):
     mobile_no=db.Column(db.String(20),nullable=False,unique=True)
     password = db.Column(db.String(200), nullable=False)
 
-    otp = db.Column(db.String(6))
+    otp = db.Column(db.String(255))
     otp_created_at=db.Column(db.DateTime)
 
     is_verified = db.Column(db.Boolean, default=False)

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Login | Smart Expense Tracker</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page" data-page="login">
+
+  <!-- Background decorative shapes -->
+  <div class="background-shapes">
+    <span class="shape shape-one"></span>
+    <span class="shape shape-two"></span>
+    <span class="shape shape-three"></span>
+  </div>
+
+  <main class="register-page">
+
+    <section class="register-card">
+
+      <div class="register-header">
+        <div class="logo-box">🔐</div>
+
+        <h1>Welcome Back</h1>
+
+        <p>
+          Login to access your Smart Expense Tracker dashboard.
+        </p>
+      </div>
+
+      <form id="loginForm" class="register-form">
+
+        <div class="form-group">
+          <label for="username">Username</label>
+
+          <input
+            type="text"
+            id="username"
+            class="form-input"
+            placeholder="Enter your username"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="Enter your password"
+            required
+          >
+        </div>
+
+        <div class="form-extra">
+          <a href="forgot-password.html" class="forgot-link">
+            Forgot Password?
+          </a>
+        </div>
+
+        <button type="submit" class="register-btn">
+          Login
+        </button>
+
+        <div id="loginMessage" class="message"></div>
+
+      </form>
+
+      <div class="register-footer">
+
+        <p>
+          Don't have an account?
+          <a href="register.html">Create account</a>
+        </p>
+
+        <p>
+          Not verified yet?
+          <a href="verify-otp.html">Verify OTP</a>
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Verify OTP | Smart Expense Tracker</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page" data-page="verify-otp"></body>
+
+  <div class="background-shapes">
+    <span class="shape shape-one"></span>
+    <span class="shape shape-two"></span>
+    <span class="shape shape-three"></span>
+  </div>
+
+  <main class="otp-page">
+
+    <section class="otp-card">
+
+      <div class="otp-header">
+        <div class="logo-box">🔐</div>
+
+        <h1>Verify OTP</h1>
+
+        <p>
+          Enter the OTP sent during registration to activate your account.
+        </p>
+      </div>
+
+      <form id="otpForm" class="otp-form">
+
+        <div class="form-group">
+          <label for="mobile_no">Mobile Number</label>
+
+          <input
+            type="text"
+            id="mobile_no"
+            placeholder="Enter your mobile number"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="otp">OTP</label>
+
+          <input
+            type="text"
+            id="otp"
+            placeholder="Enter 6 digit OTP"
+            maxlength="6"
+            required
+          >
+        </div>
+
+        <button type="submit" class="otp-btn">
+          Verify OTP
+        </button>
+
+        <button type="button" class="resend-btn" id="resendOtpBtn">
+          Resend OTP
+        </button>
+
+        <div id="otpMessage" class="message"></div>
+
+      </form>
+
+      <div class="otp-footer">
+        <p>
+          Already verified?
+          <a href="login.html">Login here</a>
+        </p>
+
+        <p>
+          Wrong number?
+          <a href="register.html">Register again</a>
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Income | Smart Expense Tracker</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="app-page" data-page="income">
+
+  <div class="background-shapes">
+    <span class="shape shape-one"></span>
+    <span class="shape shape-two"></span>
+    <span class="shape shape-three"></span>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-logo">
+      <div class="logo-box small-logo">₹</div>
+      <h2>SmartTrack</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">
+        <span>📊</span>
+        Dashboard
+      </a>
+
+      <a href="income.html" class="active">
+        <span>💰</span>
+        Income
+      </a>
+
+      <a href="expense.html">
+        <span>💳</span>
+        Expense
+      </a>
+
+      <a href="loan.html">
+        <span>🏦</span>
+        Loan
+      </a>
+
+      <a href="borrow.html">
+        <span>🤝</span>
+        Borrow/Lend
+      </a>
+
+      <a href="subscription.html">
+        <span>🔁</span>
+        Subscription
+      </a>
+
+      <a href="ai-suggestions.html">
+        <span>🤖</span>
+        AI Suggestions
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="logout-btn" id="logoutBtn">
+        Logout
+      </button>
+    </div>
+
+  </aside>
+
+  <main class="dashboard-main">
+
+    <header class="dashboard-topbar">
+
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle">
+          ☰
+        </button>
+
+        <div>
+          <h1>Income</h1>
+          <p>Add, view, edit and delete your income records.</p>
+        </div>
+      </div>
+
+      
+
+    </header>
+
+    <section class="dashboard-content">
+
+      <div class="dashboard-panel">
+
+        <div class="panel-header">
+          <h2>Add Income</h2>
+        </div>
+
+        <div class="panel-body">
+
+          <form id="incomeForm">
+
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label for="source">Income Source</label>
+
+                <input
+                  type="text"
+                  id="source"
+                  class="form-input"
+                  placeholder="Salary / Freelance / Business"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="amount">Amount</label>
+
+                <input
+                  type="number"
+                  id="amount"
+                  class="form-input"
+                  placeholder="30000"
+                  required
+                >
+              </div>
+
+              <div class="form-group form-full">
+                <label for="description">Description</label>
+
+                <input
+                  type="text"
+                  id="description"
+                  class="form-input"
+                  placeholder="Monthly salary received"
+                >
+              </div>
+
+            </div>
+
+            <button type="submit" class="register-btn">
+              Add Income
+            </button>
+
+            <div id="incomeMessage" class="message"></div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+      <div class="dashboard-panel">
+
+        <div class="panel-header">
+          <h2>Income Records</h2>
+        </div>
+
+        <div class="table-wrap">
+
+          <table class="data-table">
+
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Source</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="incomeTable">
+              <tr>
+                <td colspan="6">Loading income records...</td>
+              </tr>
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

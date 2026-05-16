@@ -5,6 +5,9 @@ import random
 import os
 from datetime import datetime,timedelta
 from utils.category_default import create_default_categories
+from utils.hashed import verify_hashed_otp
+from utils.otp import send_otp_mail
+from utils.hashed import hash_otp,generate_otp
 
 
 def generate_otp():
@@ -34,8 +37,8 @@ def verify_otp():
         return {"message":"user not found"}     ,404
     
     #otp check
-    if user.otp !=otp:
-        return{"message":"Invalid otp"} ,400
+    if not verify_hashed_otp(user.otp, otp):
+      return jsonify({"message": "Invalid OTP"}), 400
 
     #otp expiry check
     if not user.otp_created_at or datetime.utcnow()>user.otp_created_at+timedelta(minutes=3):
@@ -54,6 +57,7 @@ def verify_otp():
     user.otp=None
     user.otp_created_at=None
     db.session.commit()
+    create_default_categories(user.id)
     
     return {"message":"otp verified successfully"},200
 
@@ -76,13 +80,12 @@ def resend_otp():
             "message":"User not found"
         }),400
     
-    otp=generate_otp()
-    user.otp=otp
+    plain_otp=generate_otp()
+    user.otp=hash_otp(plain_otp)
     user.otp_created_at=datetime.utcnow()
-    if os.getenv("APP_ENV") == "development":
-      print("Register OTP:", otp)
     db.session.commit()
     db.session.refresh(user) #it refresh db
+    send_otp_mail(user.email, plain_otp, purpose="verification")
     return jsonify({
         "message":"Otp sent successfully"
     }),200

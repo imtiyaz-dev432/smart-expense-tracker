@@ -71,22 +71,35 @@ def ai():
 
 
     # Financial health
+    total_income = total_income or 0
+    total_expense = total_expense or 0
+
+    remaining_balance = total_income - total_expense
+
     financial_health = "Good"
+    expense_ratio = 0
+    financial_health_score = 100
 
     if total_income == 0 and total_expense > 0:
-        financial_health = "Risky"
+     expense_ratio = 100
+     financial_health_score = 0
+     financial_health = "Risky"
 
     elif total_income > 0:
-        expense_ratio = (total_expense / total_income) * 100
-        financial_health_score=100-expense_ratio
+       expense_ratio = round((total_expense / total_income) * 100, 2)
+       financial_health_score = round(max(0, 100 - expense_ratio), 2)
 
-        if expense_ratio > 100:
-            financial_health = "Risky"
-        elif expense_ratio >= 70:
-            financial_health = "Moderate"
-        else:
-            financial_health = "Good"
+       if expense_ratio > 100:
+        financial_health = "Risky"
+       elif expense_ratio >= 70:
+        financial_health = "Moderate"
+       else:
+        financial_health = "Good"
 
+    else:
+     expense_ratio = 0
+     financial_health_score = 100
+     financial_health = "Good"
     # Overspending alert
     if total_income > 0 and total_expense > total_income:
         suggestions.append({
@@ -116,7 +129,7 @@ def ai():
             "message": f"You saved {format_amount(remaining_balance)} this month.",
             "action": "Move some money into an emergency fund or savings account."
         })
-
+   
     # Category-wise expense
     category_data = db.session.query(
         Expense.category,

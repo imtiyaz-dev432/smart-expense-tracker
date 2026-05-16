@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Dashboard | Smart Expense Tracker</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="app-page" data-page="dashboard">
+
+  <!-- Background Shapes -->
+  <div class="background-shapes">
+    <span class="shape shape-one"></span>
+    <span class="shape shape-two"></span>
+    <span class="shape shape-three"></span>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-logo">
+      <div class="logo-box small-logo">₹</div>
+      <h2>SmartTrack</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <a href="dashboard.html" class="active">
+        <span>📊</span>
+        Dashboard
+      </a>
+
+      <a href="income.html">
+        <span>💰</span>
+        Income
+      </a>
+
+      <a href="expense.html">
+        <span>💳</span>
+        Expense
+      </a>
+
+      <a href="loan.html">
+        <span>🏦</span>
+        Loan
+      </a>
+
+      <a href="borrow.html">
+        <span>🤝</span>
+        Borrow/Lend
+      </a>
+
+      <a href="subscription.html">
+        <span>🔁</span>
+        Subscription
+      </a>
+
+      <a href="ai-suggestions.html">
+        <span>🤖</span>
+        AI Suggestions
+      </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="logout-btn" id="logoutBtn">
+        Logout
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- Main Dashboard -->
+  <main class="dashboard-main">
+
+    <!-- Topbar -->
+    <header class="dashboard-topbar">
+
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle">
+          ☰
+        </button>
+
+        <div>
+          <h1>Dashboard</h1>
+          <p>Welcome back, manage your finance smartly.</p>
+        </div>
+      </div>
+
+     
+
+    </header>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard-content">
+
+      <!-- Summary Cards -->
+      <div class="summary-grid">
+
+        <div class="summary-card">
+          <div class="summary-icon income-icon">💰</div>
+          <p>Total Income</p>
+          <h2 id="totalIncome">₹0</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon expense-icon">💳</div>
+          <p>Total Expense</p>
+          <h2 id="totalExpense">₹0</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon balance-icon">📈</div>
+          <p>Balance</p>
+          <h2 id="balance">₹0</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon loan-icon">🏦</div>
+          <p>Loan Remaining</p>
+          <h2 id="loanRemaining">₹0</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon emi-icon">📅</div>
+          <p>Monthly EMI</p>
+          <h2 id="monthlyEmi">₹0</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon borrow-icon">🤝</div>
+          <p>Pending Borrow</p>
+          <h2 id="pendingBorrow">₹0</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon lend-icon">📤</div>
+          <p>Pending Lent</p>
+          <h2 id="pendingLent">₹0</h2>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon subscription-icon">🔁</div>
+          <p>Monthly Subscription</p>
+          <h2 id="subscriptionTotal">₹0</h2>
+        </div>
+
+      </div>
+
+      <!-- Monthly Report -->
+      <div class="dashboard-row">
+
+        <div class="dashboard-panel">
+          <div class="panel-header">
+            <h2>Monthly Report</h2>
+          </div>
+
+          <div class="monthly-grid">
+
+            <div class="mini-card">
+              <p>Monthly Income</p>
+              <h3 id="monthlyIncome">₹0</h3>
+            </div>
+
+            <div class="mini-card">
+              <p>Monthly Expense</p>
+              <h3 id="monthlyExpense">₹0</h3>
+            </div>
+
+            <div class="mini-card">
+              <p>Monthly Balance</p>
+              <h3 id="monthlyBalance">₹0</h3>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="dashboard-panel">
+          <div class="panel-header">
+            <h2>Quick Counts</h2>
+          </div>
+
+          <div class="monthly-grid">
+
+            <div class="mini-card">
+              <p>Active Loans</p>
+              <h3 id="activeLoans">0</h3>
+            </div>
+
+            <div class="mini-card">
+              <p>Completed Loans</p>
+              <h3 id="completedLoans">0</h3>
+            </div>
+
+            <div class="mini-card">
+              <p>Upcoming Subscriptions</p>
+              <h3 id="upcomingSubscriptions">0</h3>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Category Wise Expense -->
+      <div class="dashboard-panel">
+        <div class="panel-header">
+          <h2>Category Wise Expense</h2>
+        </div>
+
+        <div id="categoryList" class="category-list">
+          <p class="empty-text">No category expense found.</p>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

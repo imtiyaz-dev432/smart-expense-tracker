@@ -18,7 +18,16 @@ def add_loan():
         return jsonify({
             "message": "All loan fields are required"
         }), 400
-    
+    if total_amount<remaining_amount:
+        return jsonify({
+            "message":"Remaining amount is less than or equal the total amount"
+        }),400
+
+
+    if total_amount<=monthly_emi:
+        return jsonify({
+            "message":"monthly emi is less than total_amount"
+        }),400
     current_user_id=int(get_jwt_identity())
     due_date_obj=datetime.strptime(due_date,"%Y-%m-%d")
     new_loan=Loan(

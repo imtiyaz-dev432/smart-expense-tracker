@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Expense | Smart Expense Tracker</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="app-page" data-page="expense">
+
+  <div class="background-shapes">
+    <span class="shape shape-one"></span>
+    <span class="shape shape-two"></span>
+    <span class="shape shape-three"></span>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-logo">
+      <div class="logo-box small-logo">₹</div>
+      <h2>SmartTrack</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">
+        <span>📊</span>
+        Dashboard
+      </a>
+
+      <a href="income.html">
+        <span>💰</span>
+        Income
+      </a>
+
+      <a href="expense.html" class="active">
+        <span>💳</span>
+        Expense
+      </a>
+
+      <a href="loan.html">
+        <span>🏦</span>
+        Loan
+      </a>
+
+      <a href="borrow.html">
+        <span>🤝</span>
+        Borrow/Lend
+      </a>
+
+      <a href="subscription.html">
+        <span>🔁</span>
+        Subscription
+      </a>
+
+      <a href="ai-suggestions.html">
+        <span>🤖</span>
+        AI Suggestions
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="logout-btn" id="logoutBtn">
+        Logout
+      </button>
+    </div>
+
+  </aside>
+
+  <main class="dashboard-main">
+
+    <header class="dashboard-topbar">
+
+      <div class="topbar-left">
+        
+
+        <div>
+          <h1>Expense</h1>
+          <p>Add, view, edit and delete your expense records.</p>
+        </div>
+      </div>
+
+      
+
+    </header>
+
+    <section class="dashboard-content">
+
+      <div class="dashboard-panel">
+
+        <div class="panel-header">
+          <h2>Add Expense</h2>
+        </div>
+
+        <div class="panel-body">
+
+          <form id="expenseForm">
+
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label for="title">Expense Title</label>
+
+                <input
+                  type="text"
+                  id="title"
+                  class="form-input"
+                  placeholder="TV / Food / Travel"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="amount">Amount</label>
+
+                <input
+                  type="number"
+                  id="amount"
+                  class="form-input"
+                  placeholder="10000"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="category">Category</label>
+
+                <input
+                  type="text"
+                  id="category"
+                  class="form-input"
+                  placeholder="Electronics / Food / Rent"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description</label>
+
+                <input
+                  type="text"
+                  id="description"
+                  class="form-input"
+                  placeholder="Bought new TV"
+                >
+              </div>
+
+            </div>
+
+            <button type="submit" class="register-btn">
+              Add Expense
+            </button>
+
+            <div id="expenseMessage" class="message"></div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+      <div class="dashboard-panel">
+
+        <div class="panel-header">
+          <h2>Expense Records</h2>
+        </div>
+
+        <div class="table-wrap">
+
+          <table class="data-table">
+
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="expenseTable">
+              <tr>
+                <td colspan="7">Loading expense records...</td>
+              </tr>
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
