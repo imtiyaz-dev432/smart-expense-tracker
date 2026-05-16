@@ -64,7 +64,7 @@ def get_borrow():
             "person_name":borrow.person_name,
             "amount":borrow.amount,
             "type":borrow.type,
-            "due_datee":borrow.due_date,
+            "due_date":borrow.due_date,
             "status":borrow.status,
             "note":borrow.note,
             "created_at":borrow.created_at
