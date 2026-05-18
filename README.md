@@ -1,4 +1,4 @@
-# Smart Expense Tracker Backend
+# Smart Expense Tracker 
 
 Smart Expense Tracker Backend is a Flask-based personal finance management API designed to help users track income, expenses, loans, borrow/lend records, subscriptions, and financial health insights from one place.
 
@@ -18,7 +18,7 @@ Many users track only expenses, but real personal finance also includes:
 - Upcoming payments
 - Financial health score
 
-This backend solves these problems by combining all these modules into one smart finance API.
+This web app solves these problems by combining all these modules into one smart finance API.
 
 ---
 
@@ -35,6 +35,32 @@ This backend solves these problems by combining all these modules into one smart
 - Forgot password
 - Reset password
 - Environment variable support using `.env`
+
+---
+
+### Frontend UI
+
+- Responsive frontend using HTML, CSS, and JavaScript
+- Register page
+- OTP verification page
+- Login page
+- Forgot password page
+- Reset password page
+- Dashboard page
+- Income page
+- Expense page
+- Loan page
+- Borrow/Lend page
+- Subscription page
+- AI suggestions page
+- Sidebar navigation
+- Success and error messages
+- Indian currency formatting
+- Frontend API integration with backend
+- Auto redirect if user is not logged in
+- Auto refresh expired access token using refresh token
+
+---
 
 ### Income Management
 
@@ -146,7 +172,7 @@ Example AI insight:
 ---
 
 ## Tech Stack
-
+**Backend**
 - Python
 - Flask
 - PostgreSQL
@@ -158,7 +184,101 @@ Example AI insight:
 - Postman
 - Git and GitHub
 
+
+**Frontend**
+- HTML5
+- CSS3
+- JavaScript
+- Fetch API
+- LocalStorage
+
+**Tools**
+-GIT
+-GIT HUB
+-Postman
+-VS Code
 ---
+
+
+---
+## Screenshots
+<img width="1919" height="971" alt="Register Page" src="https://github.com/user-attachments/assets/e2080a76-704a-45e0-a092-d341f645ea22" />
+<img width="1905" height="982" alt="Verify-otp-Page" src="https://github.com/user-attachments/assets/b86303d7-636b-41a0-b21e-bb5a6529dbdd" />
+<img width="1920" height="970" alt="Login Page " src="https://github.com/user-attachments/assets/11208293-b3e9-4329-a3da-fbc18ccfbd34" />
+<img width="1917" height="976" alt="Dashboard Page" src="https://github.com/user-attachments/assets/3a6131fd-366b-4a1d-b907-5aad3d3a6fdd" />
+<img width="1914" height="976" alt="Loan Page" src="https://github.com/user-attachments/assets/1a657a71-677f-4834-8d83-1959d45353b0" />
+<img width="1910" height="973" alt="Income Page" src="https://github.com/user-attachments/assets/6afc13b2-2dea-484a-b52a-724df0e02510" />
+<img width="1920" height="972" alt="Expense Page" src="https://github.com/user-attachments/assets/d776198a-dc58-44e2-b35e-3e17ff6ce9be" />
+<img width="1917" height="974" alt="Borrow or Lend Page" src="https://github.com/user-attachments/assets/6f39e7cc-6887-4e2d-8461-b5814182ab64" />
+<img width="1918" height="973" alt="Subscription Page" src="https://github.com/user-attachments/assets/69a4a6f2-c013-4b46-8dac-f49f921a37a1" />
+<img width="1920" height="977" alt="AI Suggestion Page" src="https://github.com/user-attachments/assets/7cb2615f-18d2-42b3-a376-ed78f705ad4d" />
+
+---
+
+---
+
+## Frontend API Base URL
+
+The frontend connects with the Flask backend using the API base URL defined in:
+
+
+Simple meaning:
+
+```text
+frontend/js/script.js = location of code
+http://127.0.0.1:5000 = local backend URL
+```
+
+## Authentication Flow
+
+User registers
+        ↓
+OTP is generated
+        ↓
+User verifies OTP
+        ↓
+User logs in
+        ↓
+Backend returns access_token and refresh_token
+        ↓
+Frontend saves both tokens in localStorage
+        ↓
+Protected API calls use access_token
+        ↓
+If access_token expires, frontend uses refresh_token
+        ↓
+New access_token is generated
+        ↓
+User stays logged in
+        ↓
+Logout removes both tokens
+
+---
+
+---
+
+
+
+## Project Structure
+
+```text
+smart-expense-tracker/
+├── app.py
+├── block.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+├── dbms/
+├── models/
+├── routes/
+├── utils/
+├── migrations/
+├── frontend/
+└── screenshots/
+
+
+
+
 
 ## Environment Variables
 
@@ -238,6 +358,7 @@ http://127.0.0.1:5000
 POST /auth/register
 POST /auth/login
 POST /auth/logout
+POST /auth/refresh
 ```
 
 ### OTP APIs
@@ -381,36 +502,30 @@ GET /ai/suggestion
 
 ## Development Notes
 
-- OTP is currently printed in the terminal during development mode.
+
 - `.env` file is ignored using `.gitignore`.
 - JWT token blocklist is used for logout.
 - Flask-Migrate is used for database migrations.
-- APIs are tested using Postman.
+- APIs are tested using Postman and Frontend.
 
 ---
 
 ## Future Scope
 
-- Email OTP using Flask-Mail
-- SMS OTP integration
-- Frontend UI with HTML, CSS, and JavaScript
+- Deployment on Render/Vercel
 - Charts for dashboard analytics
 - PDF monthly reports
-- AI/ML-based expense category prediction
-- Automatic subscription detection
-- Deployment on a cloud platform
-- Improve category system using relational category_id mapping
-
+- AI/ML-based expense prediction
 ---
 
 ## Project Status
 
 ```text
 Backend: Completed
+Frontend:Completed
 Database: PostgreSQL
 Authentication: JWT based
-Testing: Postman
-Frontend: Planned
+Testing: Completed using Postman and Browser
 Deployment: Planned
 ```
 
@@ -418,7 +533,7 @@ Deployment: Planned
 
 ## Author
 
-Mohommad Imtiyaz
+**Mohommad Imtiyaz**
 
 Python Backend Developer  
-Flask | PostgreSQL | REST APIs | JWT | SQLAlchemy | GitHub
+Flask | PostgreSQL | REST APIs | JavaScript | JWT | SQLAlchemy | GitHub
