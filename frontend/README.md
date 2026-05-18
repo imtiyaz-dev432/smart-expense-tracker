@@ -1,23 +1,48 @@
 # Smart Expense Tracker Frontend
 
-This is a plain HTML, CSS, and basic JavaScript frontend for the Flask Smart Expense Tracker Backend.
+This is the frontend UI for the Smart Expense Tracker project. It is built using plain HTML, CSS, and JavaScript.
 
-## How to run
+The frontend connects with the Flask backend API and provides pages for authentication, dashboard analytics, income, expense, loan, borrow/lend, subscription, and AI suggestions.
 
-1. Start your Flask backend:
-   ```bash
-   python app.py
-   ```
+---
 
-2. Open `index.html` in browser.
+## Tech Stack
 
-3. Register, verify OTP, login, and test dashboard pages.
+- HTML5
+- CSS3
+- JavaScript
+- Fetch API
+- LocalStorage
 
-## Notes
+---
 
-- API base URL is set in `js/script.js`:
-  ```js
-  const API_BASE_URL = "http://127.0.0.1:5000";
-  ```
-- JWT token is stored in `localStorage`.
-- No React, Bootstrap, Tailwind, or external framework is used.
+## Features
+
+- Register page
+- OTP verification page
+- Login page
+- Forgot password page
+- Reset password page
+- Dashboard page
+- Income management page
+- Expense management page
+- Loan management page
+- Borrow/Lend management page
+- Subscription management page
+- AI suggestions page
+- Sidebar navigation
+- Success and error message handling
+- JWT access token handling
+- Refresh token handling
+- Auto refresh access token on protected API requests
+- Secure logout
+- Indian rupee amount formatting
+
+---
+
+## How to Run Frontend
+
+First, start the Flask backend from the root folder:
+
+```bash
+python app.py
