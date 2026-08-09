@@ -1,0 +1,70 @@
+import os
+import requests
+from threading import Thread
+
+
+def send_async_email(email, subject, body):
+    try:
+        api_key = os.getenv("BREVO_API_KEY")
+        from_email = os.getenv("FROM_EMAIL")
+        from_name = os.getenv("FROM_NAME", "smart-expense-tracker")
+
+        if not api_key:
+            print("Email sending failed: BREVO_API_KEY is missing")
+            return
+
+        if not from_email:
+            print("Email sending failed: FROM_EMAIL is missing")
+            return
+
+        url = "https://api.brevo.com/v3/smtp/email"
+
+        payload = {
+            "sender": {
+                "name": from_name,
+                "email": from_email
+            },
+            "to": [
+                {
+                    "email": email
+                }
+            ],
+            "subject": subject,
+            "textContent": body
+        }
+
+        headers = {
+            "accept": "application/json",
+            "api-key": api_key,
+            "content-type": "application/json"
+        }
+
+        print("Sending OTP email using Brevo API to:", email)
+
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+
+        print("Brevo response status:", response.status_code)
+        print("Brevo response:", response.text)
+
+        if response.status_code not in [200, 201, 202]:
+            print("Email sending failed:", response.text)
+            return
+
+        print("Email sent successfully to:", email)
+
+    except Exception as e:
+        print("Email sending failed:", str(e))
+
+
+def send_otp_mail(email, otp, purpose="verification"):
+    if purpose == "verification":
+        subject = "Verify your email - Smart Expense Tracker"
+        body = f"Your verification OTP is: {otp}"
+    elif purpose == "forgot_password":
+        subject = "Reset your password - Smart Expense Tracker"
+        body = f"Your password reset OTP is: {otp}"
+    else:
+        subject = "Your OTP - Smart Expense Tracker"
+        body = f"Your OTP is: {otp}"
+
+    send_async_email(email, subject, body)
