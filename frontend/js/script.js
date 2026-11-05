@@ -3,7 +3,7 @@ console.log("COMMON SCRIPT LOADED");
 
   //  CONFIG
 
-const API_BASE_URL = "https://smart-expense-tracker-3prf.onrender.com";
+const API_BASE_URL = "http://127.0.0.1:5000";
 
 const ENDPOINTS = {
   register: "/auth/register",
@@ -163,8 +163,7 @@ async function refreshAccessToken() {
 
 
 
-  //  API REQUESTS
-
+  
 
 async function apiRequest(endpoint, method, body) {
   const response = await fetch(API_BASE_URL + endpoint, {

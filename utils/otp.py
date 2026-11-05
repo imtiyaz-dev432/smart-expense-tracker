@@ -1,8 +1,8 @@
 import os
-import requests
-from threading import Thread
+import requests #can be used for communicating with the 3rd party api's
+from celery import shared_task
 
-
+@shared_task() #Bhai, @shared_task — ek decorator jo function ko Celery task banata hai — bina app instance se bound kiye
 def send_async_email(email, subject, body):
     try:
         api_key = os.getenv("BREVO_API_KEY")
@@ -10,9 +10,7 @@ def send_async_email(email, subject, body):
         from_name = os.getenv("FROM_NAME", "smart-expense-tracker")
 
         if not api_key:
-            print("Email sending failed: BREVO_API_KEY is missing")
-            return
-
+            raise ValueError("Brevo Api key is missing")
         if not from_email:
             print("Email sending failed: FROM_EMAIL is missing")
             return
@@ -22,7 +20,7 @@ def send_async_email(email, subject, body):
         payload = {
             "sender": {
                 "name": from_name,
-                "email": from_email
+                "email": from_email    #This is strictly dictated by the Brevo API design. Email APIs are built to handle bulk sends, meaning they expect an array (a list) of multiple recipients
             },
             "to": [
                 {
@@ -39,16 +37,13 @@ def send_async_email(email, subject, body):
             "content-type": "application/json"
         }
 
-        print("Sending OTP email using Brevo API to:", email)
 
-        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response = requests.post(url, json=payload, headers=headers, timeout=10) #it send the payload to  brevo 
 
-        print("Brevo response status:", response.status_code)
-        print("Brevo response:", response.text)
-
+       
         if response.status_code not in [200, 201, 202]:
-            print("Email sending failed:", response.text)
-            return
+            print("Error")
+            
 
         print("Email sent successfully to:", email)
 
@@ -67,4 +62,4 @@ def send_otp_mail(email, otp, purpose="verification"):
         subject = "Your OTP - Smart Expense Tracker"
         body = f"Your OTP is: {otp}"
 
-    send_async_email(email, subject, body)
+    send_async_email.delay(email, subject, body)

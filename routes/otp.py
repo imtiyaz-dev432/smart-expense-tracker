@@ -10,8 +10,7 @@ from utils.otp import send_otp_mail
 from utils.hashed import hash_otp,generate_otp
 
 
-def generate_otp():
-    return str(random.randint(100000, 999999))
+
 otp_bp = Blueprint('otp', __name__, url_prefix='/otp')
 @otp_bp.route('/verify-otp', methods=['POST'])
 
@@ -82,7 +81,7 @@ def resend_otp():
     user.otp=hash_otp(plain_otp)
     user.otp_created_at=datetime.utcnow()
     db.session.commit()
-    db.session.refresh(user) #it refresh db
+    db.session.refresh(user) 
     send_otp_mail(user.email, plain_otp, purpose="verification")
     return jsonify({
         "message":"Otp sent successfully"

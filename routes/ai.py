@@ -11,7 +11,7 @@ from models.borrow import Borrow
 from models.subscribe import Subscription
 
 def format_amount(amount):
-    return f"{int(amount):,}"
+    return f"₹{float(amount):,}"
 ai_bp = Blueprint("ai_bp", __name__)
 
 
@@ -47,15 +47,13 @@ def ai():
     total_income = float(total_income or 0)
     total_expense = float(total_expense or 0)
 
-    remaining_balance = total_income - total_expense
-
-    #Borrow and lend count
     pending_borrow_lent_count=Borrow.query.filter(
         Borrow.user_id==current_user_id,
-        Borrow.status=='pending'
+        Borrow.status=='pending',
+        Borrow.type=="borrowed"
     ).count()
     
-    #amount of both lend and borrow
+    
     pending_borrow_total=Borrow.query.with_entities(
         func.sum(Borrow.amount)).filter(
           Borrow.user_id==current_user_id,
@@ -76,9 +74,6 @@ def ai():
 
     remaining_balance = total_income - total_expense
 
-    financial_health = "Good"
-    expense_ratio = 0
-    financial_health_score = 100
 
     if total_income == 0 and total_expense > 0:
      expense_ratio = 100
@@ -97,9 +92,10 @@ def ai():
         financial_health = "Good"
 
     else:
+     financial_health = "You Do Not Have Any Income"
      expense_ratio = 0
-     financial_health_score = 100
-     financial_health = "Good"
+     financial_health_score = 0
+
     # Overspending alert
     if total_income > 0 and total_expense > total_income:
         suggestions.append({
@@ -201,10 +197,10 @@ def ai():
 
     if pending_borrow_lent_count >= 3:
      suggestions.append({
-        "type": "borrow_lend_management",
+        "type": "borrow_management",
         "priority": "medium",
         "title": "Multiple Pending Records",
-        "message": f"You have {pending_borrow_lent_count} pending borrow/lend records.",
+        "message": f"You have {pending_borrow_lent_count} pending borrow records.",
         "action": "Review and clear old pending records this week."
     })                
 
@@ -277,6 +273,4 @@ def ai():
         },
         "suggestions": suggestions
     }), 200
-
-
     

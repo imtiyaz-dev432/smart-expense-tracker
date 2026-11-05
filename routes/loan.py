@@ -26,7 +26,7 @@ def add_loan():
 
     if total_amount<=monthly_emi:
         return jsonify({
-            "message":"monthly emi is less than total_amount"
+            "message":"monthly emi is less than or equal to total_amount"
         }),400
     current_user_id=int(get_jwt_identity())
     due_date_obj=datetime.strptime(due_date,"%Y-%m-%d")
@@ -148,7 +148,7 @@ def repayment(loan_id):
             "message":"This loan is already completed"
         })    ,400
 
-
+    
     if paid_amount>loan.remaining_amount:
         return jsonify({
             "message":"paid amount is not greater than remaining amount"
