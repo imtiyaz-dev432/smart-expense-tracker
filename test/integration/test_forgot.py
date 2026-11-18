@@ -1,24 +1,43 @@
 import pytest
 
-
 @pytest.mark.integration
-def test_forgot_with_email(make_verified_user,client):
-    email="original123@test.com"
-    make_verified_user(username="karan",email=email)
-    r=client.post("/forgot-password",json={"email":email})
-    assert r.status_code==200
-    body=r.get_json()
+def test_forgot_with_email(
+    make_verified_user,
+    client,
+    fake_redis,
+    mock_send_otp
+):
+    email = "original123@test.com"
+    user = make_verified_user(username="karan", email=email)
+
+    r = client.post("/forgot-password", json={"email": email})
+
+    assert r.status_code == 200
+    body = r.get_json()
     assert body["success"] is True
 
+    mock_send_otp.assert_called_once()
+    assert fake_redis.exists(f"otp:reset:{user.email}")
+
 
 @pytest.mark.integration
-def test_forgot_with_mobile_no(make_verified_user,client):
-    mobile_no="9222222222"
-    make_verified_user(username="karan",mobile_no=mobile_no)
-    r=client.post("/forgot-password",json={"mobile_no":mobile_no})
-    assert r.status_code==200
-    body=r.get_json()
+def test_forgot_with_mobile_no(
+    make_verified_user,
+    client,
+    fake_redis,
+    mock_send_otp
+):
+    mobile_no = "9222222222"
+    user = make_verified_user(username="karan", mobile_no=mobile_no)
+
+    r = client.post("/forgot-password", json={"mobile_no": mobile_no})
+
+    assert r.status_code == 200
+    body = r.get_json()
     assert body["success"] is True
+
+    mock_send_otp.assert_called_once()
+    assert fake_redis.exists(f"otp:reset:{user.email}")
 
 @pytest.mark.integration
 def test_forgot_without_body(client):
