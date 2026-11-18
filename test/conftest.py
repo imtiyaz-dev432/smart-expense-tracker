@@ -62,7 +62,7 @@ def mock_send_otp(monkeypatch):
 @pytest.fixture
 def seed_otp(fake_redis):
     def _seed(identifier,otp="654321",ttl=300):
-        fake_redis.setex(f"otp:verification:{identifier}",ttl,str(hash_otp(otp)))
+        fake_redis.set(f"otp:verification:{identifier}",ttl,str(hash_otp(otp)))
         return otp
     return _seed
 
