@@ -1,22 +1,26 @@
 import time
-from flask import Blueprint, request,jsonify,current_app
+
+from flask import Blueprint, current_app, jsonify, request
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+)
+from sqlalchemy.exc import IntegrityError
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from dbms.db import db
 from models.user import User
-from werkzeug.security import generate_password_hash,check_password_hash
-import random
-import os
-from datetime import datetime
-from flask_jwt_extended import create_access_token,jwt_required,get_jwt,create_refresh_token,get_jwt_identity
-from block import BLOCKLIST
-from utils.otp import send_otp_mail
-from utils.hashed import generate_otp,hash_otp
-from utils.validators import is_valid_email,is_valid_mobile,is_valid_password
-from utils.rate import limiter
+from utils.category_default import create_default_categories
 from utils.extensions import redis_client
-from sqlalchemy.exc import IntegrityError
+from utils.hashed import generate_otp, hash_otp
+from utils.otp import send_otp_mail
+from utils.rate import limiter
+from utils.validators import is_valid_email, is_valid_mobile, is_valid_password
+
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
-
-
 @auth_bp.route('/register', methods=['POST'])
 @limiter.limit("3 per minute")
 def register():
@@ -88,6 +92,8 @@ def register():
     )
     
     db.session.add(new_user)
+    db.session.flush()
+    create_default_categories(new_user)
     otp_sent=False
     try:
       db.session.commit()
@@ -121,6 +127,11 @@ def register():
 @limiter.limit("3 per minute")
 def login():
     data = request.get_json(silent=True)
+    if not data:
+        return jsonify({
+            "success":False,
+            "message":"Request body is required"
+        }),400
 
     username = data.get("username")
     password = data.get("password")
@@ -132,7 +143,7 @@ def login():
 
     if not user or not check_password_hash(user.password, password):
        return {"success": False, "message": "Invalid credentials"}, 401
-
+    
     if not user.is_verified:
         return {"message": "Please verify your OTP before login"}, 403
 

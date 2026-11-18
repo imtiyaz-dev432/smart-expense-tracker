@@ -1,5 +1,6 @@
 import re
 
+
 def is_valid_email(email):
     email=email.strip() if email else "" #strip removes if i pass in m@gmail.com\n then "\n" automatically deleted
     pattern=r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$'

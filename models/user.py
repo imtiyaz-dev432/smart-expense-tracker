@@ -1,5 +1,5 @@
+
 from dbms.db import db
-from datetime import datetime
 
 
 class User(db.Model):
@@ -9,7 +9,11 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     mobile_no=db.Column(db.String(20),nullable=False,unique=True)
     password = db.Column(db.String(200), nullable=False)
-    otp = db.Column(db.String(255))
-    otp_created_at=db.Column(db.DateTime)
     is_verified = db.Column(db.Boolean, default=False)
-
+    categories=db.relationship("Category",back_populates="user",cascade="all, delete-orphan")
+    expenses=db.relationship("Expense",back_populates="user",cascade="all, delete-orphan")
+    incomes=db.relationship("Income",back_populates="user",cascade="all, delete-orphan")
+    loans=db.relationship("Loan",back_populates="user",cascade="all, delete-orphan")
+    borrows=db.relationship("Borrow",back_populates="user",cascade="all, delete-orphan")
+    subscriptions = db.relationship("Subscription",back_populates="user",cascade="all, delete-orphan"
+)

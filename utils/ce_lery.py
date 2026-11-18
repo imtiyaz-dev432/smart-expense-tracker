@@ -1,4 +1,8 @@
-from celery import Celery,Task #Celery ka base class — jo har task ka structure define karta hai. Task khud nahi banata
+from celery import (  #Celery ka base class — jo har task ka structure define karta hai. Task khud nahi banata
+    Celery,
+    Task,
+)
+
 
 def make_celery(app):
 

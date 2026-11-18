@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Tracker — Audit Report · 2026-11-08</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0f1a; --surface: #0f172a; --surface-2: #1e293b; --border: #2d3f5c;
+    --text: #e2e8f0; --text-dim: #94a3b8; --text-faint: #64748b;
+    --accent: #6366f1; --accent-glow: #818cf8;
+    --green: #10b981; --green-soft: #064e3b;
+    --red: #ef4444; --red-soft: #7f1d1d;
+    --amber: #f59e0b; --amber-soft: #78350f;
+    --blue: #3b82f6; --purple: #a855f7; --cyan: #06b6d4;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.65; font-size: 14.5px;
+  }
+  code, pre { font-family: "SF Mono", "Monaco", "Menlo", "Consolas", monospace; font-size: 12.5px; }
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 250px; background: var(--surface); border-right: 1px solid var(--border);
+    padding: 20px 12px; position: sticky; top: 0; height: 100vh; overflow-y: auto; flex-shrink: 0;
+  }
+  .sidebar h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-faint); margin: 16px 8px 8px; font-weight: 700;
+  }
+  .sidebar h2:first-child { margin-top: 0; }
+  .sidebar a {
+    display: block; color: var(--text-dim); text-decoration: none;
+    padding: 6px 10px; border-radius: 5px; font-size: 12.5px;
+    margin-bottom: 1px; transition: all 0.15s; border-left: 2px solid transparent;
+  }
+  .sidebar a:hover { background: var(--surface-2); color: var(--text); border-left-color: var(--accent); }
+  .sidebar a.active { background: rgba(99,102,241,0.15); color: #c7d2fe; border-left-color: var(--accent); font-weight: 600; }
+  .main { flex: 1; padding: 40px 48px 80px; max-width: 1150px; margin: 0 auto; width: 100%; }
+  .hero {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%);
+    border-radius: 14px; padding: 40px 48px; margin-bottom: 36px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ""; position: absolute; top: -50%; right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(168,85,247,0.35), transparent 70%);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: ""; position: absolute; bottom: -40%; left: -5%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(99,102,241,0.3), transparent 70%);
+    border-radius: 50%;
+  }
+  .hero > * { position: relative; z-index: 1; }
+  .hero-tag {
+    display: inline-block; background: rgba(255,255,255,0.15); color: #e0e7ff;
+    padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; margin-bottom: 16px;
+  }
+  .hero h1 { font-size: 32px; line-height: 1.2; margin-bottom: 14px; color: #fff; font-weight: 800; }
+  .hero p { color: #c7d2fe; font-size: 15px; max-width: 780px; }
+  .hero-meta { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+  .hero-meta-item {
+    background: rgba(0,0,0,0.28); padding: 7px 14px; border-radius: 6px;
+    font-size: 12px; color: #e0e7ff;
+  }
+  .hero-meta-item strong { color: #fff; font-weight: 700; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 36px; }
+  .stat {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px; position: relative; overflow: hidden;
+  }
+  .stat::before { content: ""; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); }
+  .stat.green::before { background: var(--green); }
+  .stat.amber::before { background: var(--amber); }
+  .stat.red::before { background: var(--red); }
+  .stat.purple::before { background: var(--purple); }
+  .stat.cyan::before { background: var(--cyan); }
+  .stat-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.9px; color: var(--text-faint); margin-bottom: 6px; font-weight: 700; }
+  .stat-value { font-size: 26px; font-weight: 800; line-height: 1; color: var(--text); }
+  .stat-sub { font-size: 11.5px; color: var(--text-dim); margin-top: 4px; }
+  section { margin-bottom: 52px; scroll-margin-top: 24px; }
+  h2.section-title {
+    font-size: 22px; margin-bottom: 10px; display: flex; align-items: center;
+    gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 700;
+  }
+  h2.section-title .badge-num {
+    background: var(--accent); color: white; min-width: 32px; height: 32px;
+    padding: 0 8px; border-radius: 6px; display: inline-flex; align-items: center;
+    justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0;
+  }
+  .section-subtitle { color: var(--text-dim); margin-bottom: 22px; font-size: 14px; }
+  h3.module-title {
+    font-size: 17px; color: var(--accent-glow); margin: 26px 0 12px;
+    display: flex; align-items: center; gap: 10px; font-weight: 700;
+  }
+  h3.module-title::before { content: "▸"; color: var(--accent); font-size: 14px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 14px; }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .card-title { font-size: 15px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; flex: 1; }
+  .card-title code { background: var(--surface-2); padding: 2px 8px; border-radius: 4px; color: var(--purple); font-size: 12px; font-weight: 500; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px;
+    border-radius: 5px; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; white-space: nowrap;
+  }
+  .badge.critical { background: var(--red-soft); color: #fca5a5; }
+  .badge.high { background: var(--amber-soft); color: #fcd34d; }
+  .badge.medium { background: #1e3a8a; color: #93c5fd; }
+  .badge.low { background: var(--green-soft); color: #6ee7b7; }
+  .badge.info { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .badge.new { background: #14532d; color: #86efac; }
+  .badge.removed { background: #4c1d95; color: #d8b4fe; }
+  .diff { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+  @media (max-width: 850px) {
+    .diff { grid-template-columns: 1fr; }
+    .main { padding: 20px; }
+    .sidebar { display: none; }
+  }
+  .diff-col { border-radius: 7px; overflow: hidden; border: 1px solid var(--border); }
+  .diff-header {
+    padding: 6px 12px; font-size: 10.5px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.7px; display: flex; align-items: center; gap: 6px;
+  }
+  .diff-header.before { background: var(--red-soft); color: #fca5a5; }
+  .diff-header.after { background: var(--green-soft); color: #6ee7b7; }
+  .diff-body {
+    background: #060b14; padding: 12px 14px; font-family: "SF Mono", monospace;
+    font-size: 11.5px; line-height: 1.75; color: #cbd5e1; overflow-x: auto; white-space: pre;
+  }
+  .diff-body .del { color: #fca5a5; background: rgba(239,68,68,0.08); display: inline-block; width: 100%; }
+  .diff-body .add { color: #6ee7b7; background: rgba(16,185,129,0.08); display: inline-block; width: 100%; }
+  .diff-body .comment { color: #64748b; font-style: italic; }
+  .diff-body .keyword { color: #c084fc; }
+  .diff-body .string { color: #86efac; }
+  .diff-body .number { color: #fbbf24; }
+  .impact {
+    background: linear-gradient(135deg, rgba(16,185,129,0.07), rgba(16,185,129,0.02));
+    border-left: 3px solid var(--green); padding: 10px 14px; border-radius: 5px;
+    margin-top: 10px; font-size: 13px; color: var(--text-dim);
+  }
+  .impact.warning { background: linear-gradient(135deg, rgba(245,158,11,0.07), rgba(245,158,11,0.02)); border-left-color: var(--amber); }
+  .impact.danger { background: linear-gradient(135deg, rgba(239,68,68,0.07), rgba(239,68,68,0.02)); border-left-color: var(--red); }
+  .impact.info { background: linear-gradient(135deg, rgba(59,130,246,0.07), rgba(59,130,246,0.02)); border-left-color: var(--blue); }
+  .impact strong { color: var(--text); }
+  table {
+    width: 100%; border-collapse: collapse; background: var(--surface);
+    border-radius: 8px; overflow: hidden; margin: 10px 0; font-size: 13px;
+  }
+  thead { background: var(--surface-2); }
+  th {
+    text-align: left; padding: 10px 12px; font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.6px; color: var(--text-faint); border-bottom: 1px solid var(--border); font-weight: 700;
+  }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-dim); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code { background: var(--surface-2); padding: 2px 6px; border-radius: 3px; color: #c084fc; font-size: 11.5px; }
+  td.bug-num { color: var(--text-faint); font-weight: 700; font-family: "SF Mono", monospace; font-size: 11px; }
+  .concept { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 10px; }
+  .concept h4 { color: var(--purple); font-size: 13.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-weight: 700; }
+  .concept h4 .cn { background: var(--purple); color: #000; width: 22px; height: 22px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
+  .concept p { color: var(--text-dim); font-size: 13px; margin-bottom: 6px; }
+  .concept code { background: rgba(0,0,0,0.35); padding: 1px 5px; border-radius: 3px; color: #c084fc; font-size: 11.5px; }
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .score-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .score-label { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; font-weight: 600; }
+  .score-value { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .score-value.good { color: var(--green); }
+  .score-value.mid { color: var(--amber); }
+  .score-value.bad { color: var(--red); }
+  .score-bar { height: 5px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 3px; background: var(--green); }
+  .score-bar-fill.amber { background: var(--amber); }
+  .score-bar-fill.red { background: var(--red); }
+  footer { margin-top: 60px; padding-top: 28px; border-top: 1px solid var(--border); color: var(--text-faint); text-align: center; font-size: 12.5px; }
+  .mt-16 { margin-top: 16px; }
+  .timeline { position: relative; padding-left: 30px; margin-top: 16px; }
+  .timeline::before { content: ""; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before {
+    content: ""; position: absolute; left: -27px; top: 4px;
+    width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg);
+  }
+  .timeline-item.done::before { background: var(--green); }
+  .timeline-title { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .timeline-desc { color: var(--text-dim); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+  <h2>Overview</h2>
+  <a href="#summary">Executive Summary</a>
+  <a href="#timeline">Session Timeline</a>
+  <a href="#matrix">Bug Matrix</a>
+
+  <h2>Models</h2>
+  <a href="#income-model">1. Income Model</a>
+  <a href="#expense-model">2. Expense Model</a>
+  <a href="#loan-model">3. Loan Model</a>
+  <a href="#borrow-model">4. Borrow Model</a>
+
+  <h2>Routes Built</h2>
+  <a href="#loan-routes">5. Loan Module (5 routes)</a>
+  <a href="#borrow-routes">6. Borrow Module (2 routes)</a>
+
+  <h2>Analysis</h2>
+  <a href="#concepts">Concepts Learned</a>
+  <a href="#scores">Final Scores</a>
+  <a href="#next">Next Steps</a>
+</aside>
+
+<main class="main">
+
+<div class="hero">
+  <span class="hero-tag">AUDIT REPORT · 2026-11-08</span>
+  <h1>Expense Tracker — Yesterday's Session</h1>
+  <p>
+    Full audit of <strong>Sunday, 2026-11-08</strong>: two model refinements
+    (Income, Expense), one brand-new module (<strong>Loan</strong>) with 5 complete routes,
+    and the start of a fourth module (<strong>Borrow</strong>) with 2 routes in progress.
+  </p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><strong>Date:</strong> 2026-11-08 (Sunday)</div>
+    <div class="hero-meta-item"><strong>Modules:</strong> Income · Expense · Loan · Borrow</div>
+    <div class="hero-meta-item"><strong>Routes Built:</strong> 7</div>
+    <div class="hero-meta-item"><strong>Bugs Fixed:</strong> 58</div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<section id="summary">
+  <h2 class="section-title"><span class="badge-num">Σ</span> Executive Summary</h2>
+  <p class="section-subtitle">Yesterday's scope — models refined, Loan module completed, Borrow started.</p>
+
+  <div class="stats">
+    <div class="stat red">
+      <div class="stat-label">Critical Bugs</div>
+      <div class="stat-value">17</div>
+      <div class="stat-sub">crashes, silent data loss, security</div>
+    </div>
+    <div class="stat amber">
+      <div class="stat-label">High Bugs</div>
+      <div class="stat-value">16</div>
+      <div class="stat-sub">logic errors, wrong codes</div>
+    </div>
+    <div class="stat purple">
+      <div class="stat-label">Medium/Polish</div>
+      <div class="stat-value">25</div>
+      <div class="stat-sub">consistency, typos, edge cases</div>
+    </div>
+    <div class="stat cyan">
+      <div class="stat-label">Total Bugs</div>
+      <div class="stat-value">58</div>
+      <div class="stat-sub">found and fixed</div>
+    </div>
+    <div class="stat green">
+      <div class="stat-label">Routes Built</div>
+      <div class="stat-value">7</div>
+      <div class="stat-sub">5 loan + 2 borrow</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Models Touched</div>
+      <div class="stat-value">4</div>
+      <div class="stat-sub">Income, Expense, Loan, Borrow</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">What was accomplished</div>
+    </div>
+    <ul style="list-style: none; padding-left: 0;">
+      <li style="padding: 6px 0; color: var(--text-dim);">
+        <span class="badge new">MODEL</span> &nbsp; <strong>Income Model</strong> — Numeric, timezone-aware, cascade direction fixed
+      </li>
+      <li style="padding: 6px 0; color: var(--text-dim);">
+        <span class="badge new">MODEL</span> &nbsp; <strong>Expense Model</strong> — same fixes, description nullable, category string for "Other" UX
+      </li>
+      <li style="padding: 6px 0; color: var(--text-dim);">
+        <span class="badge new">MODULE</span> &nbsp; <strong>Loan Module</strong> — complete CRUD + repayment (5 routes)
+      </li>
+      <li style="padding: 6px 0; color: var(--text-dim);">
+        <span class="badge new">MODULE</span> &nbsp; <strong>Borrow Module</strong> — model + POST/GET routes (2 of 5 done)
+      </li>
+      <li style="padding: 6px 0; color: var(--text-dim);">
+        <span class="badge info">CONCEPT</span> &nbsp; Final-state PATCH validation pattern (multi-field update)
+      </li>
+      <li style="padding: 6px 0; color: var(--text-dim);">
+        <span class="badge info">CONCEPT</span> &nbsp; Decimal serialization — every response must use <code>float()</code>
+      </li>
+      <li style="padding: 6px 0; color: var(--text-dim);">
+        <span class="badge info">CONCEPT</span> &nbsp; Cascade direction — parent → child only
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <h2 class="section-title"><span class="badge-num">⏱</span> Session Timeline</h2>
+  <p class="section-subtitle">Order of work performed yesterday.</p>
+
+  <div class="card">
+    <div class="timeline">
+      <div class="timeline-item done">
+        <div class="timeline-title">1. Income Model — production fixes</div>
+        <div class="timeline-desc">Float → Numeric, datetime.now frozen → lambda, timezone=True, cascade removed</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-title">2. Expense Model — same fixes applied</div>
+        <div class="timeline-desc">Numeric, lambda datetime, description nullable, user_id ondelete CASCADE</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-title">3. Loan Model — created</div>
+        <div class="timeline-desc">Numeric for amounts, timezone-aware timestamps, cascade direction, FK ondelete</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-title">4. Loan POST route — built & iterated</div>
+        <div class="timeline-desc">Multiple iterations to fix syntax errors, validation, silent bugs</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-title">5. Loan GET route — built</div>
+        <div class="timeline-desc">Decimal + datetime serialization, ordering, decorator order</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-title">6. Loan PATCH route — built (complex)</div>
+        <div class="timeline-desc">Final-state validation pattern, silent no-op fixes, remaining check</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-title">7. Loan DELETE route — built</div>
+        <div class="timeline-desc">Ownership check, rollback, try/except</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-title">8. Loan Repayment route — built</div>
+        <div class="timeline-desc">Decimal arithmetic, 'closed' status, replay-safe logic</div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-title">9. Borrow Model — created & fixed</div>
+        <div class="timeline-desc">Float → Numeric, type → borrow_type, lambda datetime, status nullable=False</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">10. Borrow POST/GET routes — in progress</div>
+        <div class="timeline-desc">2 of 5 routes done — PATCH, DELETE, repayment pending</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUG MATRIX -->
+<section id="matrix">
+  <h2 class="section-title"><span class="badge-num">◈</span> Bug Matrix</h2>
+  <p class="section-subtitle">58 bugs found and fixed yesterday.</p>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th style="text-align:center">Critical</th>
+          <th style="text-align:center">High</th>
+          <th style="text-align:center">Medium</th>
+          <th style="text-align:center">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Income Model</td><td style="text-align:center"><span class="badge critical">1</span></td><td style="text-align:center"><span class="badge high">2</span></td><td style="text-align:center"><span class="badge medium">1</span></td><td style="text-align:center"><strong>4</strong></td></tr>
+        <tr><td>Expense Model</td><td style="text-align:center"><span class="badge critical">1</span></td><td style="text-align:center"><span class="badge high">2</span></td><td style="text-align:center"><span class="badge medium">2</span></td><td style="text-align:center"><strong>5</strong></td></tr>
+        <tr><td>Loan Model</td><td style="text-align:center"><span class="badge critical">1</span></td><td style="text-align:center"><span class="badge high">2</span></td><td style="text-align:center"><span class="badge medium">2</span></td><td style="text-align:center"><strong>5</strong></td></tr>
+        <tr><td>Loan POST</td><td style="text-align:center"><span class="badge critical">3</span></td><td style="text-align:center"><span class="badge high">2</span></td><td style="text-align:center"><span class="badge medium">3</span></td><td style="text-align:center"><strong>8</strong></td></tr>
+        <tr><td>Loan GET</td><td style="text-align:center"><span class="badge critical">2</span></td><td style="text-align:center"><span class="badge high">1</span></td><td style="text-align:center"><span class="badge medium">2</span></td><td style="text-align:center"><strong>5</strong></td></tr>
+        <tr><td>Loan PATCH</td><td style="text-align:center"><span class="badge critical">2</span></td><td style="text-align:center"><span class="badge high">3</span></td><td style="text-align:center"><span class="badge medium">4</span></td><td style="text-align:center"><strong>9</strong></td></tr>
+        <tr><td>Loan DELETE</td><td style="text-align:center">—</td><td style="text-align:center">—</td><td style="text-align:center"><span class="badge medium">2</span></td><td style="text-align:center"><strong>2</strong></td></tr>
+        <tr><td>Loan Repayment</td><td style="text-align:center"><span class="badge critical">2</span></td><td style="text-align:center"><span class="badge high">1</span></td><td style="text-align:center"><span class="badge medium">4</span></td><td style="text-align:center"><strong>7</strong></td></tr>
+        <tr><td>Borrow Model</td><td style="text-align:center"><span class="badge critical">2</span></td><td style="text-align:center"><span class="badge high">1</span></td><td style="text-align:center"><span class="badge medium">3</span></td><td style="text-align:center"><strong>6</strong></td></tr>
+        <tr><td>Borrow POST</td><td style="text-align:center"><span class="badge critical">2</span></td><td style="text-align:center"><span class="badge high">2</span></td><td style="text-align:center"><span class="badge medium">2</span></td><td style="text-align:center"><strong>6</strong></td></tr>
+        <tr><td>Borrow GET</td><td style="text-align:center"><span class="badge critical">1</span></td><td style="text-align:center">—</td><td style="text-align:center"><span class="badge medium">2</span></td><td style="text-align:center"><strong>3</strong></td></tr>
+        <tr style="background: var(--surface-2); font-weight: 700;">
+          <td>Total</td>
+          <td style="text-align:center"><span class="badge critical">17</span></td>
+          <td style="text-align:center"><span class="badge high">16</span></td>
+          <td style="text-align:center"><span class="badge medium">25</span></td>
+          <td style="text-align:center"><strong>58</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- INCOME MODEL -->
+<section id="income-model">
+  <h2 class="section-title"><span class="badge-num">1</span> Income Model — 4 Fixes</h2>
+  <p class="section-subtitle">Money precision, frozen timestamp, timezone, cascade.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#01</code> <code>Float</code> → <code>Numeric(12,2)</code></div>
+      <span class="badge critical">Precision</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">amount = db.Column(<span class="del">db.Float</span>, nullable=<span class="keyword">False</span>)
+<span class="comment"># 0.1 + 0.2 = 0.30000000000000004</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body">amount = db.Column(<span class="add">db.Numeric(12, 2)</span>, nullable=<span class="keyword">False</span>)
+<span class="comment"># Decimal — precise money handling</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#02</code> Frozen timestamp — <code>datetime.now</code> call at import time</div>
+      <span class="badge critical">Crash / Data</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">date = db.Column(db.DateTime,
+    default=<span class="del">datetime.now(timezone.utc)</span>)
+<span class="comment"># Called once at import — same timestamp forever</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body">date = db.Column(db.DateTime(timezone=<span class="keyword">True</span>),
+    default=<span class="add">lambda: datetime.now(timezone.utc)</span>)
+<span class="comment"># Called per insert — fresh timestamp ✅</span></div>
+      </div>
+    </div>
+    <div class="impact danger">
+      <strong>Impact:</strong> Without <code>lambda</code>, all rows would have identical timestamps from module load time. "Latest first" ordering would be meaningless.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#03</code> <code>DateTime</code> timezone-naive → <code>timezone=True</code></div>
+      <span class="badge high">Data</span>
+    </div>
+    <div class="impact">
+      Without <code>timezone=True</code>, timezone info was stripped on save — DB stored naive timestamps. Cross-timezone users would see incorrect times. Fixed by adding the flag.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#04</code> Cascade on wrong side</div>
+      <span class="badge critical">Dangerous</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">user = db.relationship(<span class="string">"User"</span>,
+    back_populates=<span class="string">"incomes"</span>,
+    cascade=<span class="del">"all, delete-orphan"</span>)
+<span class="comment"># Income delete → User delete!</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body">user = db.relationship(<span class="string">"User"</span>,
+    back_populates=<span class="string">"incomes"</span>)
+<span class="comment"># Cascade moved to User.incomes (parent side) ✅</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPENSE MODEL -->
+<section id="expense-model">
+  <h2 class="section-title"><span class="badge-num">2</span> Expense Model — 5 Fixes</h2>
+  <p class="section-subtitle">Same fixes as Income, plus description nullable and category string decision.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Fixes applied</div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Before</th><th>After</th></tr></thead>
+      <tbody>
+        <tr><td class="bug-num">#05</td><td><code>db.Float</code></td><td><code>db.Numeric(12,2)</code></td></tr>
+        <tr><td class="bug-num">#06</td><td><code>default=datetime.now(...)</code></td><td><code>default=lambda: datetime.now(...)</code></td></tr>
+        <tr><td class="bug-num">#07</td><td><code>db.DateTime</code></td><td><code>db.DateTime(timezone=True)</code></td></tr>
+        <tr><td class="bug-num">#08</td><td><code>cascade</code> on user side</td><td>Cascade removed from user relationship</td></tr>
+        <tr><td class="bug-num">#09</td><td><code>description nullable=False</code></td><td><code>nullable=True</code></td></tr>
+      </tbody>
+    </table>
+    <div class="impact">
+      <strong>Design decision kept:</strong> Category stays as <code>String</code> (not FK) — needed for the "type your own in Other" UX.
+    </div>
+  </div>
+</section>
+
+<!-- LOAN MODEL -->
+<section id="loan-model">
+  <h2 class="section-title"><span class="badge-num">3</span> Loan Model — 5 Fixes</h2>
+  <p class="section-subtitle">New model created — Numeric for amounts, cascade fixed, FK ondelete added.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Fixes applied</div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Before</th><th>After</th></tr></thead>
+      <tbody>
+        <tr><td class="bug-num">#10</td><td><code>Float</code> for amounts</td><td><code>Numeric(12,2)</code> — all 3 amount fields</td></tr>
+        <tr><td class="bug-num">#11</td><td>Missing <code>timezone=True</code></td><td><code>DateTime(timezone=True)</code></td></tr>
+        <tr><td class="bug-num">#12</td><td>Frozen <code>created_at</code></td><td><code>lambda: datetime.now(timezone.utc)</code></td></tr>
+        <tr><td class="bug-num">#13</td><td>FK without <code>ondelete</code></td><td><code>ForeignKey('users.id', ondelete='CASCADE')</code></td></tr>
+        <tr><td class="bug-num">#14</td><td><code>cascade</code> on user side (dangerous)</td><td>Cascade moved to <code>User.loans</code></td></tr>
+      </tbody>
+    </table>
+    <div class="impact info">
+      <strong>Deferred:</strong> CheckConstraints on <code>status</code>, <code>amount</code>, <code>remaining_amount</code> — validation currently happens in routes only.
+    </div>
+  </div>
+</section>
+
+<!-- BORROW MODEL -->
+<section id="borrow-model">
+  <h2 class="section-title"><span class="badge-num">4</span> Borrow Model — 6 Fixes</h2>
+  <p class="section-subtitle">Person-to-person lend/borrow. Cascade + callable default + builtin shadowing fixed.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#15</code> <code>lambda: datetime.utcnow</code> — missing <code>()</code> + deprecated</div>
+      <span class="badge critical">Crash</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">default=<span class="del">lambda: datetime.utcnow</span>
+<span class="comment"># Returns function object, not datetime → TypeError</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body">default=<span class="add">lambda: datetime.now(timezone.utc)</span></div>
+      </div>
+    </div>
+    <div class="impact danger">
+      <strong>Two bugs in one line:</strong> Missing <code>()</code> meant the lambda returned the <em>function</em> not a datetime — SQLAlchemy would crash. Plus <code>utcnow</code> is deprecated in Python 3.12+.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#16</code> <code>type</code> — shadowing Python builtin</div>
+      <span class="badge high">Design</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">type = db.Column(<span class="del">db.String(20)</span>, nullable=<span class="keyword">False</span>)
+<span class="comment"># Shadowing builtin, no validation</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body">borrow_type = db.Column(<span class="add">db.String(20)</span>, nullable=<span class="keyword">False</span>)
+<span class="comment"># Renamed, validated in route ✅</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Other fixes</div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Before</th><th>After</th></tr></thead>
+      <tbody>
+        <tr><td class="bug-num">#17</td><td><code>Float</code> for amount</td><td><code>Numeric(12,2)</code></td></tr>
+        <tr><td class="bug-num">#18</td><td><code>due_date</code> timezone-naive</td><td><code>DateTime(timezone=True)</code></td></tr>
+        <tr><td class="bug-num">#19</td><td><code>status</code> without <code>nullable=False</code></td><td>Added — NULL not allowed</td></tr>
+        <tr><td class="bug-num">#20</td><td><code>created_at</code> broken default</td><td><code>lambda: datetime.now(timezone.utc)</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- LOAN ROUTES -->
+<section id="loan-routes">
+  <h2 class="section-title"><span class="badge-num">5</span> Loan Module — 5 Routes (31 bugs)</h2>
+  <p class="section-subtitle">Complete CRUD + repayment — the biggest build of the day.</p>
+
+  <h3 class="module-title">POST /loan — 8 bugs</h3>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#21</code> <code>"25 per minutes"</code> — plural, syntax error</div>
+      <span class="badge critical">Syntax</span>
+    </div>
+    <div class="impact danger">
+      Flask-Limiter rejects plural form at decorator application time — <code>loan.py</code> fails to import, entire app fails to start.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#22</code> <code>remaining_amount</code> NameError in validation</div>
+      <span class="badge critical">Crash</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body"><span class="keyword">if not</span> loan_name <span class="keyword">or not</span> total_amount \
+    <span class="keyword">or not</span> monthly_emi <span class="keyword">or not</span> <span class="del">remaining_amount</span> \
+    <span class="keyword">or not</span> due_date:
+<span class="comment"># remaining_amount undefined → NameError</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body"><span class="keyword">if not</span> loan_name <span class="keyword">or</span> total_amount <span class="keyword">is</span> None \
+    <span class="keyword">or</span> monthly_emi <span class="keyword">is</span> None <span class="keyword">or not</span> due_date:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#23</code> <code>due_date_obj</code> check before parse — NameError</div>
+      <span class="badge critical">Crash</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body"><span class="keyword">if</span> <span class="del">due_date_obj</span> &lt;= datetime.now(...):
+<span class="comment"># before try/except — undefined</span>
+<span class="keyword">try</span>:
+    due_date_obj = datetime.strptime(...)</div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body"><span class="keyword">try</span>:
+    due_date_obj = datetime.strptime(...)
+<span class="keyword">except</span>: <span class="keyword">return</span> 400
+
+<span class="keyword">if</span> due_date_obj &lt;= datetime.now(...):   <span class="comment"># now defined ✅</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Other POST fixes</div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Bug</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td class="bug-num">#24</td><td><code>timezone</code> not imported</td><td><code>from datetime import datetime, timezone</code></td></tr>
+        <tr><td class="bug-num">#25</td><td><code>"massage"</code> typo</td><td><code>"message"</code></td></tr>
+        <tr><td class="bug-num">#26</td><td><code>total_amount < 0</code> allows 0</td><td><code><= 0</code></td></tr>
+        <tr><td class="bug-num">#27</td><td>Success <code>"success": False</code></td><td><code>True</code></td></tr>
+        <tr><td class="bug-num">#28</td><td>Message logic inverted</td><td>Correct message: "EMI must be less than total"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="module-title">GET /loan/get — 5 bugs</h3>
+
+  <table>
+    <thead><tr><th>#</th><th>Bug</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td class="bug-num">#29</td><td><code>"3 per minutes"</code> plural</td><td><code>"25 per minute"</code></td></tr>
+      <tr><td class="bug-num">#30</td><td>Decorator order — limiter above JWT</td><td><code>@jwt_required</code> first</td></tr>
+      <tr><td class="bug-num">#31</td><td><code>Decimal</code> not JSON-serializable</td><td><code>float(loan.total_amount)</code></td></tr>
+      <tr><td class="bug-num">#32</td><td><code>datetime</code> not JSON-serializable</td><td><code>.isoformat()</code></td></tr>
+      <tr><td class="bug-num">#33</td><td>No ordering</td><td><code>.order_by(created_at.desc())</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#34</code> Missing dot — <code>))all()</code></div>
+      <span class="badge critical">Syntax</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">.order_by(Loan.created_at.desc())<span class="del">all()</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body">.order_by(Loan.created_at.desc())<span class="add">.all()</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="module-title">PATCH /loan/update/&lt;id&gt; — 9 bugs</h3>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#35</code> Silent no-op — <code>new_total</code> computed but never applied</div>
+      <span class="badge critical">Data loss</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">new_total = loan.total_amount
+
+<span class="keyword">if</span> <span class="string">"total_amount"</span> <span class="keyword">in</span> data:
+    new_total = float(data[<span class="string">"total_amount"</span>])
+
+<span class="comment"># validation...</span>
+<span class="comment"># ❌ loan.total_amount = new_total MISSING</span>
+<span class="comment"># Returns 200 "updated" but DB unchanged</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body"><span class="comment"># ... same validation ...</span>
+loan.total_amount = new_total     <span class="comment"># ✅</span>
+loan.monthly_emi = new_emi
+db.session.commit()</div>
+      </div>
+    </div>
+    <div class="impact danger">
+      <strong>Worst type of bug:</strong> silent — no error, no warning. Client gets <code>{"success": true}</code> while nothing changed. User thinks update succeeded but DB is untouched.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#36</code> <code>data.get(amount)</code> vs <code>data.get("amount")</code></div>
+      <span class="badge critical">NameError</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">raw_amount = data.get(<span class="del">amount</span>)
+<span class="comment"># `amount` variable not defined → NameError</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body">raw_amount = data.get(<span class="add">"amount"</span>)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Other PATCH fixes</div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Bug</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td class="bug-num">#37</td><td><code>data.get("monthly-emi")</code> — hyphen vs underscore</td><td><code>monthly_emi</code></td></tr>
+        <tr><td class="bug-num">#38</td><td><code>InvalidOperation</code> not imported</td><td>Removed or imported properly</td></tr>
+        <tr><td class="bug-num">#39</td><td><code>remaining_amount</code> check missing</td><td>Reject if new_total < remaining</td></tr>
+        <tr><td class="bug-num">#40</td><td>Indentation errors — <code>due_date</code> and <code>status</code> blocks</td><td>Fixed indentation</td></tr>
+        <tr><td class="bug-num">#41</td><td>DB fail → 400 (should be 500)</td><td>Changed to 500</td></tr>
+        <tr><td class="bug-num">#42</td><td><code>loan_name</code> non-string crash</td><td><code>str(raw).strip()</code></td></tr>
+        <tr><td class="bug-num">#43</td><td><code>loan_name = ""</code> bypass</td><td>Explicit empty check</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="module-title">DELETE /loan/delete/&lt;id&gt; — 2 bugs</h3>
+
+  <table>
+    <thead><tr><th>#</th><th>Bug</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td class="bug-num">#44</td><td><code>"messsage"</code> typo (3 s)</td><td><code>"message"</code></td></tr>
+      <tr><td class="bug-num">#45</td><td><code>)    .first()</code> extra whitespace</td><td>Clean formatting</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="module-title">POST /loan/repayment/&lt;id&gt; — 7 bugs</h3>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#46</code> <code>'completed'</code> vs <code>'closed'</code> — status mismatch</div>
+      <span class="badge critical">Inconsistency</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body"><span class="keyword">if</span> loan.status == <span class="del">'completed'</span>:
+    <span class="keyword">return</span> 400
+
+<span class="keyword">if</span> loan.remaining_amount == 0:
+    loan.status = <span class="del">'completed'</span>
+<span class="comment"># 'completed' not in PATCH validation list</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body"><span class="keyword">if</span> loan.status == <span class="add">'closed'</span>:
+    <span class="keyword">return</span> 400
+
+<span class="keyword">if</span> loan.remaining_amount == 0:
+    loan.status = <span class="add">'closed'</span>  <span class="comment"># consistent ✅</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#47</code> <code>Decimal - float</code> — TypeError on subtraction</div>
+      <span class="badge critical">Crash</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">paid_amount = float(paid_amount)   <span class="comment"># float</span>
+loan.remaining_amount = <span class="del">loan.remaining_amount - paid_amount</span>
+<span class="comment"># Decimal - float → TypeError → 500</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body">m = float(loan.remaining_amount)    <span class="comment"># convert to float</span>
+loan.remaining_amount = m - paid_amount   <span class="comment"># float - float ✅</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#48</code> <code>Decimal</code> in response — jsonify crash on success</div>
+      <span class="badge critical">Crash</span>
+    </div>
+    <div class="impact danger">
+      After <code>db.session.commit()</code>, SQLAlchemy refreshes the object — <code>loan.remaining_amount</code> becomes <code>Decimal</code> again. <code>jsonify()</code> throws <code>TypeError: Object of type Decimal is not JSON serializable</code>. <strong>Every successful repayment would 500.</strong> Fixed with <code>float(loan.remaining_amount)</code> in the response.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Other repayment fixes</div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Bug</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td class="bug-num">#49</td><td><code>success: False</code> missing in 4 responses</td><td>Added</td></tr>
+        <tr><td class="bug-num">#50</td><td><code>paid_amount < 0</code> → 404</td><td><code><= 0</code> + 400</td></tr>
+        <tr><td class="bug-num">#51</td><td>Message "not greater than" confusing</td><td>"cannot exceed remaining amount"</td></tr>
+        <tr><td class="bug-num">#52</td><td>Typo "postive"</td><td>"positive"</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- BORROW ROUTES -->
+<section id="borrow-routes">
+  <h2 class="section-title"><span class="badge-num">6</span> Borrow Module — 2 Routes (9 bugs)</h2>
+  <p class="section-subtitle">New person-to-person lending/borrowing module. 2 of 5 routes done.</p>
+
+  <h3 class="module-title">POST /borrow/add — 6 bugs</h3>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#53</code> <code>timezone</code> not imported — NameError</div>
+      <span class="badge critical">Crash</span>
+    </div>
+    <div class="impact danger">
+      Route called <code>datetime.strptime(...).replace(tzinfo=timezone.utc)</code> but only <code>datetime</code> was imported. Every valid request would crash on <code>NameError: name 'timezone' is not defined</code>.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><code>#54</code> <code>status</code> passed to model? — silent no-op</div>
+      <span class="badge critical">Data</span>
+    </div>
+    <div class="diff">
+      <div class="diff-col">
+        <div class="diff-header before">Before</div>
+        <div class="diff-body">new_borrower = Borrow(
+    person_name=person_name,
+    amount=amount,
+    borrow_type=borrow_type,
+    ...
+    <span class="del"># status=status MISSING</span>
+)
+<span class="comment"># User's status choice ignored — always 'pending'</span></div>
+      </div>
+      <div class="diff-col">
+        <div class="diff-header after">After</div>
+        <div class="diff-body">new_borrower = Borrow(
+    person_name=person_name,
+    amount=amount,
+    borrow_type=borrow_type,
+    <span class="add">status=status,</span>
+    ...
+)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Other POST fixes</div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Bug</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td class="bug-num">#55</td><td>No success response — returns <code>null</code></td><td><code>return jsonify({...}), 201</code></td></tr>
+        <tr><td class="bug-num">#56</td><td><code>rollback()</code> missing in except</td><td>Added</td></tr>
+        <tr><td class="bug-num">#57</td><td><code>status</code> required even though has default</td><td><code>or "pending"</code> pattern</td></tr>
+        <tr><td class="bug-num">#58</td><td><code>due_date</code> required though model nullable</td><td>Conditional parse with <code>if due_date:</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="module-title">GET /borrow/get — 3 bugs</h3>
+
+  <table>
+    <thead><tr><th>#</th><th>Bug</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td class="bug-num">#59</td><td><code>borrow.type</code> — should be <code>borrow_type</code></td><td>AttributeError crash → fixed</td></tr>
+      <tr><td class="bug-num">#60</td><td><code>"due_datee"</code> typo (2 e's)</td><td><code>"due_date"</code></td></tr>
+      <tr><td class="bug-num">#61</td><td><code>"message": borrow_list</code></td><td><code>"borrows": borrow_list</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="impact info">
+    <strong>Status:</strong> POST and GET work after fixes. PATCH, DELETE, and repayment routes still pending.
+  </div>
+</section>
+
+<!-- CONCEPTS -->
+<section id="concepts">
+  <h2 class="section-title"><span class="badge-num">§</span> Concepts Reinforced Yesterday</h2>
+  <p class="section-subtitle">8 mental models tested and reinforced through real bug-fixing.</p>
+
+  <div class="concept">
+    <h4><span class="cn">1</span> Final-state validation pattern (PATCH)</h4>
+    <p>Validate the <strong>combined final state</strong>, not each field in isolation. If user sends <code>{total: 3000, emi: 2000}</code> to update <code>{total: 500000, emi: 5000}</code>, checking <code>total &lt;= emi</code> field-by-field would reject valid input. Compute both new values → validate together → apply together.</p>
+  </div>
+
+  <div class="concept">
+    <h4><span class="cn">2</span> Decimal serialization — every response needs <code>float()</code></h4>
+    <p><code>Numeric</code> columns return <code>Decimal</code> objects. <code>jsonify()</code> can't serialize them. Every response containing a Decimal field must wrap with <code>float(...)</code>. Same for <code>datetime</code> → <code>.isoformat()</code>.</p>
+  </div>
+
+  <div class="concept">
+    <h4><span class="cn">3</span> <code>Decimal - float</code> is illegal in Python 3</h4>
+    <p>Mixing Decimal and float in arithmetic throws <code>TypeError</code>. Either convert both to <code>Decimal</code> (<code>Decimal(str(value))</code>) or both to float. For money, Decimal is safer — never introduce float.</p>
+  </div>
+
+  <div class="concept">
+    <h4><span class="cn">4</span> Cascade direction: parent → child only</h4>
+    <p><code>cascade="all, delete-orphan"</code> belongs on the <strong>parent</strong> side (<code>User.expenses</code>). Placed on the child side, deleting a single row cascades to delete the entire parent.</p>
+  </div>
+
+  <div class="concept">
+    <h4><span class="cn">5</span> Silent no-ops are the worst bugs</h4>
+    <p>Validated input but forgot to assign to the model → response says <code>"success": true</code> while DB is unchanged. Client sees no error. Rarely caught by manual testing. Code review + tests catch this. Always double-check assignments after validation blocks.</p>
+  </div>
+
+  <div class="concept">
+    <h4><span class="cn">6</span> SQLAlchemy session refresh after commit</h4>
+    <p>After <code>db.session.commit()</code>, SQLAlchemy expires the object. Accessing a field re-fetches from DB, restoring <code>Numeric</code> → <code>Decimal</code>. So even if you assigned a <code>float</code>, the response field becomes <code>Decimal</code> again. Always wrap with <code>float()</code> in responses.</p>
+  </div>
+
+  <div class="concept">
+    <h4><span class="cn">7</span> Callable defaults need a callable, not a value</h4>
+    <p><code>default=datetime.now(...)</code> freezes the timestamp at import time. <code>default=lambda: datetime.now(...)</code> makes it a callable — invoked per insert. Same pattern required for <code>onupdate</code>.</p>
+  </div>
+
+  <div class="concept">
+    <h4><span class="cn">8</span> Enum-like values need alignment between route and model</h4>
+    <p>Route validated <code>'active'|'pending'</code>, model CheckConstraint planned <code>'pending'|'partial'|'paid'|'overdue'</code>. Mismatch → <code>IntegrityError</code> when constraint is added. Always define allowed values once (constants) and reference from both sides.</p>
+  </div>
+</section>
+
+<!-- SCORES -->
+<section id="scores">
+  <h2 class="section-title"><span class="badge-num">★</span> Final Scores — 2026-11-08</h2>
+  <p class="section-subtitle">After all fixes applied on Sunday.</p>
+
+  <div class="score-grid">
+    <div class="score-card">
+      <div class="score-label">Income Model</div>
+      <div class="score-value good">9 / 10</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width: 90%"></div></div>
+      <p style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">All critical fixes applied. Numeric, timezone-aware, cascade correct.</p>
+    </div>
+    <div class="score-card">
+      <div class="score-label">Expense Model</div>
+      <div class="score-value good">9 / 10</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width: 90%"></div></div>
+      <p style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">Same quality as Income. Category string decision documented.</p>
+    </div>
+    <div class="score-card">
+      <div class="score-label">Loan Model</div>
+      <div class="score-value good">8.5 / 10</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width: 85%"></div></div>
+      <p style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">Solid. CheckConstraints deferred but route validation covers it.</p>
+    </div>
+    <div class="score-card">
+      <div class="score-label">Loan Routes</div>
+      <div class="score-value good">8.5 / 10</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width: 85%"></div></div>
+      <p style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">5 complete routes. Final-state PATCH pattern is the standout.</p>
+    </div>
+    <div class="score-card">
+      <div class="score-label">Borrow Model</div>
+      <div class="score-value good">8.5 / 10</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width: 85%"></div></div>
+      <p style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">Fixed builtin shadowing, callable default crash. CheckConstraints deferred.</p>
+    </div>
+    <div class="score-card">
+      <div class="score-label">Borrow Routes</div>
+      <div class="score-value mid">7.5 / 10</div>
+      <div class="score-bar"><div class="score-bar-fill amber" style="width: 75%"></div></div>
+      <p style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">POST/GET working. PATCH, DELETE, repay still pending.</p>
+    </div>
+    <div class="score-card">
+      <div class="score-label">Overall Day</div>
+      <div class="score-value good">8.5 / 10</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width: 85%"></div></div>
+      <p style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">Loan module 100% complete. Borrow 40% complete. 58 bugs fixed.</p>
+    </div>
+    <div class="score-card">
+      <div class="score-label">Automated Tests</div>
+      <div class="score-value bad">0 / 10</div>
+      <div class="score-bar"><div class="score-bar-fill red" style="width: 0%"></div></div>
+      <p style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">Still the biggest gap. Silent no-op bugs would have been caught by tests.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section id="next">
+  <h2 class="section-title"><span class="badge-num">→</span> Next Steps</h2>
+  <p class="section-subtitle">What remains from yesterday's work and what to prioritize today.</p>
+
+  <div class="card">
+    <table>
+      <thead><tr><th>Priority</th><th>Task</th><th>Impact</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge critical">High</span></td>
+          <td>Borrow PATCH route — final-state validation (same pattern as Loan)</td>
+          <td>Complete the update flow</td>
+        </tr>
+        <tr>
+          <td><span class="badge critical">High</span></td>
+          <td>Borrow DELETE route — ownership check + rollback</td>
+          <td>Complete CRUD</td>
+        </tr>
+        <tr>
+          <td><span class="badge high">Medium</span></td>
+          <td>Borrow repayment / mark-paid route</td>
+          <td>Full feature parity with Loan</td>
+        </tr>
+        <tr>
+          <td><span class="badge high">Medium</span></td>
+          <td>Borrow model — CheckConstraints for status/borrow_type/amount</td>
+          <td>DB-level validation</td>
+        </tr>
+        <tr>
+          <td><span class="badge critical">High</span></td>
+          <td><strong>Pytest suite</strong> — 15+ tests across all modules</td>
+          <td>Biggest resume gap — would have caught yesterday's silent no-ops</td>
+        </tr>
+        <tr>
+          <td><span class="badge high">Medium</span></td>
+          <td>Frontend end-to-end test — full user flow</td>
+          <td>Validate actual integration</td>
+        </tr>
+        <tr>
+          <td><span class="badge high">Medium</span></td>
+          <td>Docker + Docker Compose</td>
+          <td>Reproducible deployment</td>
+        </tr>
+        <tr>
+          <td><span class="badge medium">Low</span></td>
+          <td>Refactor — helpers for <code>parse_float</code>, <code>parse_date</code>, <code>money_to_float</code></td>
+          <td>Reduce 58-bug-style repeats</td>
+        </tr>
+        <tr>
+          <td><span class="badge medium">Low</span></td>
+          <td>Pagination on all GET routes</td>
+          <td>Scale at 1000+ rows</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="impact">
+      <strong>Bottom line:</strong> Yesterday was a heavy day — 58 bugs fixed across 4 models and 7 routes. The Loan module is fully complete. The Borrow module has a solid foundation (POST/GET working) but needs 3 more routes to be complete. The <strong>biggest strategic gap</strong> remains automated testing — the "silent no-op" bugs from yesterday (like <code>loan.total_amount = new_total</code> being missing) would have been caught instantly by tests. Prioritize pytest next.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Audit report · 2026-11-08 (Sunday) · 58 bugs fixed · 7 routes built · 4 models refined</p>
+  <p style="margin-top: 6px;">Loan module complete · Borrow module 40% complete</p>
+</footer>
+
+</main>
+</div>
+
+<script>
+  document.querySelectorAll('.sidebar a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.getAttribute('href');
+      document.querySelector(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.sidebar a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      const top = sec.offsetTop - 100;
+      if (window.scrollY >= top) current = sec.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>

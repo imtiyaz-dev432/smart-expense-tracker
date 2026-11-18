@@ -1,7 +1,7 @@
-from dbms.db import db
 from models.category import Category
 
-def create_default_categories(user_id):
+
+def create_default_categories(user):
     default_categories = [
         "Food",
         "Health",
@@ -12,18 +12,8 @@ def create_default_categories(user_id):
         "Education",
         "Other"
     ]
+    existing_categories={c.name for c in user.categories}
 
-    for category_name in default_categories:
-        existing_category = Category.query.filter_by(
-            name=category_name,
-            user_id=user_id
-        ).first()
-
-        if not existing_category:
-            category = Category(
-                name=category_name,
-                user_id=user_id
-            )
-            db.session.add(category)
-
-    db.session.commit()
+    for name in default_categories:
+         if name not in existing_categories:
+             user.categories.append(Category(name=name))

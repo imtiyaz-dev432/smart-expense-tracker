@@ -1,89 +1,141 @@
-from flask import Blueprint, request,jsonify
+
+from flask import Blueprint, current_app, jsonify, request
+
 from dbms.db import db
 from models.user import User
-import random
-import os
-from datetime import datetime,timedelta
-from utils.category_default import create_default_categories
-from utils.hashed import verify_hashed_otp
+from utils.extensions import redis_client
+from utils.hashed import generate_otp, hash_otp, verify_hashed_otp
 from utils.otp import send_otp_mail
-from utils.hashed import hash_otp,generate_otp
-
-
+from utils.rate import limiter
 
 otp_bp = Blueprint('otp', __name__, url_prefix='/otp')
 @otp_bp.route('/verify-otp', methods=['POST'])
-
+@limiter.limit("3 per minute")
 def verify_otp():
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({
+            "success":False,
+            "message":"Request Body Is Required"
+        }),400
 
     email = data.get('email')
     mobile_no = data.get("mobile_no")
     otp = data.get('otp')
-    otp_type = data.get('type')
-
     if not otp:
-        return jsonify({"message": "OTP is required"}), 400
+        return jsonify({"success":False,"message": "OTP is required"}), 400
 
     user = None
 
     if email:
+        email=email.lower().strip()
         user = User.query.filter_by(email=email).first()
     elif mobile_no:
+        mobile_no=mobile_no.strip()
         user = User.query.filter_by(mobile_no=mobile_no).first()
     else:
-        return jsonify({"message": "Email or mobile number is required"}), 400
+        return jsonify({"success":False,"message": "Email or mobile number is required"}), 400
 
     if not user:
-        return jsonify({"message": "User not found"}), 404
-
-    if not user.otp:
+        return jsonify({"success":False,"message": "User not found"}), 400
+    if user.is_verified is True:
         return jsonify({
-            "message": "OTP not found. Please request a new OTP."
+            "success":False,
+            "message":"User is already verified"
+        }),400
+    otp_key=user.email
+    try:
+        stored_otp=redis_client.get(f"otp:verification:{otp_key}")
+    except Exception:
+        current_app.logger.warning("OTP:Redis is down during verifying otp")
+        return jsonify({
+            "success":False,
+            "message":"Something went wrong"
+        }),500   
+    if not stored_otp:
+        return jsonify({
+            "success": False,
+            "message": "OTP expired or not found"
         }), 400
+    if isinstance(stored_otp,bytes):
+        stored_orp_hash=stored_otp.decode('utf-8')    
+    else:
+        stored_orp_hash=stored_otp
+    if not verify_hashed_otp(stored_orp_hash,otp):
+        return jsonify({
+            "success": False,
+            "message": "Invalid OTP"    
+        }), 400 
+    try:    
+       user.is_verified = True
+       db.session.commit()
 
-    
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"OTP verification failed: {e!s}", exc_info=True)
+        return jsonify({
+            "success": False,
+            "message": "Something went wrong. Please try again later."
+        }), 500
+    try:
+        redis_client.delete(f"otp:verification:{otp_key}")    
+    except Exception:
+        current_app.logger.exception(
+            "OTP verify: Redis delete failed email=%s", email)       
 
-    if not verify_hashed_otp(user.otp, otp):
-        return jsonify({"message": "Invalid OTP"}), 400
+    return jsonify({
+        "success": True,
+        "message": "User verified successfully",
+    }), 200
 
-    if otp_type == "verification":
-        user.is_verified = True
-
-    user.otp = None
-    
-
-
-    db.session.commit()
-
-    return jsonify({"message": "OTP verified successfully"}), 200
 
 #resend otp
 @otp_bp.route("/resend-otp",methods=["POST"])
+@limiter.limit("3 per minute")
 def resend_otp():
-    data=request.get_json()
-    email=data.get("email")
-    mobile_no=data.get('mobile_no')
+    data=request.get_json(silent=True)
+    if not data:
+        return jsonify({
+            "success":False,
+            "message":"Request Body is required"
+        }),400
+    email = (data.get("email") or "").lower().strip()
+    mobile_no = (data.get("mobile_no") or "").strip()
     if not mobile_no and not email:
         return jsonify({
+            "success":False,
             "message":"Mobile no and email is required"
         }),400
-
-    user = User.query.filter(
-    (User.email == email) | (User.mobile_no == mobile_no)
-).first()
+    if email and mobile_no:
+        user= User.query.filter_by(email=email,mobile_no=mobile_no).first()
+    elif email:
+        user= User.query.filter_by(email=email).first()
+    elif mobile_no:
+        user= User.query.filter_by(mobile_no=mobile_no).first()      
     if not user:
         return jsonify({
+            "success":False,
             "message":"User not found"
         }),404
-    
+    if user.is_verified is True:
+        return jsonify({
+            "success":False,
+            "message":"User is already verified"
+        }),400
     plain_otp=generate_otp()
-    user.otp=hash_otp(plain_otp)
-    user.otp_created_at=datetime.utcnow()
-    db.session.commit()
-    db.session.refresh(user) 
-    send_otp_mail(user.email, plain_otp, purpose="verification")
-    return jsonify({
-        "message":"Otp sent successfully"
-    }),200
-   
+    hashed_otp=hash_otp(plain_otp)
+    otp_key=user.email
+    try:
+       redis_client.setex(f"otp:verification:{otp_key}", 300, str(hashed_otp))
+    except Exception:
+        current_app.logger.exception("Redis setex failed for %s", otp_key)
+        return jsonify({"success": False, "message": "Something went wrong"}), 503
+
+    try:
+        send_otp_mail(user.email, plain_otp, purpose="verification")
+    except Exception:
+        redis_client.delete(f"otp:verification:{otp_key}")              
+        current_app.logger.exception("OTP email failed for %s", otp_key)
+        return jsonify({"success": False, "message": "Failed to send OTP"}), 500
+
+    return jsonify({"success": True, "message": "OTP sent successfully"}), 200
