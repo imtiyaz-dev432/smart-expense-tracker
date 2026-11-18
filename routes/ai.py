@@ -54,7 +54,10 @@ def ai():
                 "type": "no_data",
                 "priority": "info",
                 "title": "Start Tracking",
-                "message": "You haven't added any income or expenses yet. Add your first transaction to get personalized insights.",
+                "message": (
+                    "You haven't added any income or expenses yet. "
+                    "Add your first transaction to get personalized insights."
+                ),
                 "action": "Go to Income or Expense section and add your first entry.",
             }],
         }), 200
@@ -123,13 +126,16 @@ def ai():
             "action": "Move some money into an emergency fund or savings account.",
         })
 
+    # Single column → Model.query.with_entities()
+    # Multiple columns or group by → db.session.query()
+    # (Same query, different syntax depending on columns/grouping.)
     category_rows = db.session.query(
-        Expense.category, func.sum(Expense.amount)  ).filter(
+        Expense.category, func.sum(Expense.amount),
+    ).filter(
         Expense.user_id == user_id,
         func.extract("month", Expense.date) == month,
         func.extract("year", Expense.date) == year,
-    ).group_by(Expense.category).all() # this and income and expense and all borrow lent is smae query working is same syntax is differ[Ek column → Model.query.with_entities()
-# Multiple columns ya group by → db.session.query()
+    ).group_by(Expense.category).all()
 
     if category_rows:
         top_cat, top_amt = None, 0.0
@@ -190,13 +196,16 @@ def ai():
     active_loans = Loan.query.filter_by(user_id=user_id, status="active").all()
 
     if active_loans:
-        emi_total = sum(float(l.monthly_emi or 0) for l in active_loans)
+        emi_total = sum(float(loan.monthly_emi or 0) for loan in active_loans)
         word = "loan" if len(active_loans) == 1 else "loans"
         suggestions.append({
             "type": "active_loan_warning",
             "priority": "high",
             "title": "Active Loan Repayment",
-            "message": f"You have {len(active_loans)} active {word} with total monthly EMI of {format_amount(emi_total)}.",
+            "message": (
+                f"You have {len(active_loans)} active {word} "
+                f"with total monthly EMI of {format_amount(emi_total)}."
+            ),
             "action": "Keep EMI money aside before spending on non-essential items.",
         })
 

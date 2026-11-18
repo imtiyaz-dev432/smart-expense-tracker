@@ -29,8 +29,8 @@ def create_app(config_name=None):
         app.config.from_object(Config)
       CORS(app)
       db.init_app(app)
-      migrate=Migrate(app,db)
-      limiter.init_app(app)      
+      Migrate(app,db)
+      limiter.init_app(app)
       jwt=JWTManager(app)
 
       @jwt.token_in_blocklist_loader
@@ -41,7 +41,7 @@ def create_app(config_name=None):
           except Exception:
                current_app.logger.exception("Blocklist check failed jti=%s", jti)
                return False
-         
+
       @jwt.revoked_token_loader
       def revoked_token_loader(jwt_header,jwt_payload):
             return ({
@@ -63,9 +63,9 @@ def create_app(config_name=None):
          return {"message":"Api Running Successful"}
 
       return app
-app=create_app()      
+app=create_app()
 
-celery=make_celery(app)    
+celery=make_celery(app)
 if __name__=="__main__":
     app.run(debug=False)
 

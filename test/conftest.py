@@ -55,7 +55,7 @@ def mock_send_otp(monkeypatch):
     monkeypatch.setattr("routes.auth.send_otp_mail", mock)
     monkeypatch.setattr("routes.otp.send_otp_mail", mock)
     monkeypatch.setattr("routes.forgot.send_otp_mail", mock)
-    mock.sent = sent       
+    mock.sent = sent
     return mock
 
 
@@ -90,7 +90,7 @@ def make_verified_user(database):
         hash_password=generate_password_hash(password)
         user=User(
         username=username,
-        email=email or f"{username}@test.com",                     
+        email=email or f"{username}@test.com",
         mobile_no=mobile_no or f"9{abs(hash(username)) % 1000000000:09d}",
         password=hash_password,
         is_verified=True
@@ -98,7 +98,7 @@ def make_verified_user(database):
         db.session.add(user)
         db.session.commit()
         return user
-    return make    
+    return make
 
 @pytest.fixture
 def login_get_token(make_verified_user,database,client):
@@ -108,14 +108,14 @@ def login_get_token(make_verified_user,database,client):
       token=r.get_json()["token"]
       jti=decode_token(token)['jti']
       return token,jti
-    return _login   
+    return _login
 
 @pytest.fixture
 def seed_forgot_otp(fake_redis):
     def _seed(identifier,otp="654321",ttl=300):
         fake_redis.setex(f"otp:reset:{identifier}",ttl,str(hash_otp(otp)))
         return otp
-    return _seed    
+    return _seed
 
 
 @pytest.fixture
@@ -127,7 +127,7 @@ def make_valid_expense_payload():
         "category": "Food",
         "description": "Team lunch",
         **kwargs,}
-      return payload  
+      return payload
     return _make
 
 
@@ -143,8 +143,8 @@ def build_income_payload():
         **kwargs,
     }
      return payload
-    return _make 
-     
+    return _make
+
 
 @pytest.fixture
 def make_valid_loan_payload():
@@ -173,7 +173,7 @@ def make_valid_subscription_payload():
 
 @pytest.fixture
 def make_valid_borrow_payload():
-    def _make(**kwargs): 
+    def _make(**kwargs):
      payload= {
         "person_name": "Rahul",
         "amount": 5000,

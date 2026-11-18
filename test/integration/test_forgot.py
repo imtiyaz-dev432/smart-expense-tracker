@@ -19,7 +19,7 @@ def test_forgot_with_mobile_no(make_verified_user,client):
     assert r.status_code==200
     body=r.get_json()
     assert body["success"] is True
-    
+
 @pytest.mark.integration
 def test_forgot_without_body(client):
     r = client.post("/forgot-password")

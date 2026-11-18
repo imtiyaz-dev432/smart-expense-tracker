@@ -114,11 +114,11 @@ def test_get_expenses_returns_only_own_expenses(login_get_token,client,make_veri
     payload=make_valid_expense_payload()
     r=client.post("/expense/add",json=payload,headers={"Authorization":f"Bearer {token1}"})
     assert r.status_code==201
-    assert r.get_json()["success"] is True   
+    assert r.get_json()["success"] is True
     payload=make_valid_expense_payload(title="Movies")
     r=client.post("/expense/add",json=payload,headers={"Authorization":f"Bearer {token2}"})
     assert r.status_code==201
-    assert r.get_json()["success"] is True 
+    assert r.get_json()["success"] is True
     r = client.get("/expense/all", headers={"Authorization":f"Bearer {token2}"})
     expenses = r.get_json()["expenses"]
     assert len(expenses) == 1
@@ -130,7 +130,7 @@ def test_get_expenses_returns_only_own_expenses(login_get_token,client,make_veri
 @pytest.mark.integration
 def test_update_expense_title_success(login_get_token,make_valid_expense_payload,client,database):
     token, _ = login_get_token(username="userB", password="Value@123")
-    payload=make_valid_expense_payload()
+    make_valid_expense_payload()
     r = client.post(
         "/expense/add",
         json=make_valid_expense_payload(),
@@ -138,7 +138,7 @@ def test_update_expense_title_success(login_get_token,make_valid_expense_payload
     )
     assert r.status_code == 201
     expense=Expense.query.filter_by(title="Lunch").first()
-    
+
     r=client.patch(f"/expense/update/{expense.id}",headers={"Authorization":f"Bearer {token}"},json={"title":"Cloth"})
     assert r.status_code==200
 
@@ -148,7 +148,7 @@ def test_update_expense_title_success(login_get_token,make_valid_expense_payload
 @pytest.mark.integration
 def test_update_expense_amount_success(login_get_token,make_valid_expense_payload,client,database):
     token, _ = login_get_token(username="userB", password="Value@123")
-    payload=make_valid_expense_payload()
+    make_valid_expense_payload()
     r = client.post(
         "/expense/add",
         json=make_valid_expense_payload(),
@@ -156,7 +156,7 @@ def test_update_expense_amount_success(login_get_token,make_valid_expense_payloa
     )
     assert r.status_code == 201
     expense=Expense.query.filter_by(title="Lunch").first()
-    
+
     r=client.patch(f"/expense/update/{expense.id}",headers={"Authorization":f"Bearer {token}"},json={"amount":98.76})
     assert r.status_code==200
 
@@ -164,7 +164,7 @@ def test_update_expense_amount_success(login_get_token,make_valid_expense_payloa
 @pytest.mark.integration
 def test_update_expense_category_success(login_get_token,make_valid_expense_payload,client,database):
     token, _ = login_get_token(username="userB", password="Value@123")
-    payload=make_valid_expense_payload()
+    make_valid_expense_payload()
     r = client.post(
         "/expense/add",
         json=make_valid_expense_payload(),
@@ -172,7 +172,7 @@ def test_update_expense_category_success(login_get_token,make_valid_expense_payl
     )
     assert r.status_code == 201
     expense=Expense.query.filter_by(title="Lunch").first()
-    
+
     r=client.patch(f"/expense/update/{expense.id}",headers={"Authorization":f"Bearer {token}"},json={"category":"Food and Beverages"})
     database.session.refresh(expense)
     assert expense.category=="Food and Beverages"
@@ -182,7 +182,7 @@ def test_update_expense_category_success(login_get_token,make_valid_expense_payl
 @pytest.mark.integration
 def test_update_expense_description_success(login_get_token,make_valid_expense_payload,client,database):
     token, _ = login_get_token(username="userB", password="Value@123")
-    payload=make_valid_expense_payload()
+    make_valid_expense_payload()
     r = client.post(
         "/expense/add",
         json=make_valid_expense_payload(),
@@ -190,7 +190,7 @@ def test_update_expense_description_success(login_get_token,make_valid_expense_p
     )
     assert r.status_code == 201
     expense=Expense.query.filter_by(title="Lunch").first()
-    
+
     r=client.patch(f"/expense/update/{expense.id}",headers={"Authorization":f"Bearer {token}"},json={"description":"my family dinner"})
     assert r.status_code==200
 
@@ -198,15 +198,15 @@ def test_update_expense_description_success(login_get_token,make_valid_expense_p
 @pytest.mark.integration
 def test_update_expense_not_found(login_get_token,make_valid_expense_payload,client,database):
     token, _ = login_get_token(username="userB", password="Value@123")
-    payload=make_valid_expense_payload()
+    make_valid_expense_payload()
     r = client.post(
         "/expense/add",
         json=make_valid_expense_payload(),
         headers={"Authorization": f"Bearer {token}"},
     )
     assert r.status_code == 201
-    expense=Expense.query.filter_by(title="Lunch").first()
-    
+    Expense.query.filter_by(title="Lunch").first()
+
     r=client.patch("/expense/update/9877",headers={"Authorization":f"Bearer {token}"},json={"description":"my family dinner"})
     assert r.status_code==404
 

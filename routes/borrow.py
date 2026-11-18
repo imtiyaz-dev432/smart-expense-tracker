@@ -29,7 +29,7 @@ def borrow():
             "success":False,
             "message":"Amount must be number"
         })    ,400
-     
+
     borrow_type=data.get("borrow_type")
     due_date=data.get("due_date")
     note=data.get("note")
@@ -44,17 +44,17 @@ def borrow():
         "success": False,
         "message": "Amount must be greater than zero"
     }), 400
-    borrow_type = borrow_type.strip().lower()  
+    borrow_type = borrow_type.strip().lower()
     if status not in["overdue","pending","paid"]:
         return jsonify({
             "success":False,
             "message":"Status must be active or pending"
-        }),400   
+        }),400
     if len(note)>25:
         return jsonify({
             "success":False,
             "message":"Note length upto 25 character"
-        }),400     
+        }),400
 
     if borrow_type not in ['borrowed','lent']:
         return jsonify({
@@ -62,7 +62,7 @@ def borrow():
             "message":"Type must be borrowed or lent "
         }),400
     due_date_obj = None
-    if due_date:    
+    if due_date:
       try:
         due_date_obj = datetime.strptime(due_date, "%Y-%m-%d").replace(tzinfo=UTC)
       except (ValueError, TypeError):
@@ -159,12 +159,12 @@ def update_borrow(borrow_id):
                 "success":False,
                 "message":"Amount must be positive"
             })    ,400
-        borrow.amount=amount    
+        borrow.amount=amount
     if "borrow_type" in data:
         borrow_type=data.get("borrow_type")
         if borrow_type is  None:
             return jsonify({"success": False, "message": "borrow_type cannot be null"}), 400
-        borrow_type=str(borrow_type).strip().lower()    
+        borrow_type=str(borrow_type).strip().lower()
         if borrow_type not in ['borrowed','lent']:
               return jsonify({
             "success":False,
@@ -178,12 +178,12 @@ def update_borrow(borrow_id):
                 "success":False,
                 "message":"status cannot be null"
             }),400
-        status=str(status).strip().lower()    
+        status=str(status).strip().lower()
         if status not in["overdue","pending","paid"]:
            return jsonify({
             "success":False,
             "message":"Status must be active or pending"
-        }),400    
+        }),400
         borrow.status=status
     if "note" in data:
         note=data.get("note")
@@ -192,14 +192,14 @@ def update_borrow(borrow_id):
                 "success":False,
                 "message":"note cannot be null"
             }),400
-        note=str(note).strip()    
+        note=str(note).strip()
         if len(note)>100:
               return jsonify({
             "success":False,
             "message":"Note length upto 100 character's"
         }),400
         borrow.note=note
-    if "person_name" in data:     
+    if "person_name" in data:
         person_name=(data.get("person_name") or '').strip()
         if not person_name:
             return jsonify({
@@ -211,7 +211,7 @@ def update_borrow(borrow_id):
             "success":False,
             "message":"Person name length up to 100 characters"
         }),400
-        borrow.person_name=person_name    
+        borrow.person_name=person_name
     if "due_date" in data:
           try:
             due = datetime.strptime(data["due_date"], "%Y-%m-%d").replace(tzinfo=UTC)
@@ -287,8 +287,8 @@ def mark_paid(borrow_id):
         "message": "Borrow is already marked as paid"
     }), 400
     try:
-       
-       borrow.status="paid" 
+
+       borrow.status="paid"
        db.session.commit()
     except Exception:
         db.session.rollback()

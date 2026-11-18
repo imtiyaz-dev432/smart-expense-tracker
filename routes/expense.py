@@ -18,7 +18,7 @@ def add_expense():
             "message":"Request BOdy is Required"
         }),400
     title=data.get('title')
-    raw_amount=data.get("amount")   
+    raw_amount=data.get("amount")
     category=data.get('category')
     description=data.get("description")
     try:
@@ -26,7 +26,7 @@ def add_expense():
     except (TypeError,ValueError):
         return  jsonify({"success": False, "message": "Amount must be a number"}), 400
 
-    
+
     if not title or amount is None or not category:
         return jsonify({
             "success":False,
@@ -52,7 +52,7 @@ def add_expense():
         if not existing:
             db.session.add(Category(name=category,user_id=current_user_id))
         else:
-            category=existing.name    
+            category=existing.name
         new_expense=Expense(
         title=title,
         amount=amount,
@@ -142,7 +142,7 @@ def update_expense(expense_id):
                 "message": "Title cannot be empty"}), 400
         expense.title=data.get("title")
     if "category" in data:
-        new_category = (data.get("category") or "").strip()    
+        new_category = (data.get("category") or "").strip()
         if not new_category:
             return jsonify({
                 "success":False,
@@ -154,9 +154,9 @@ def update_expense(expense_id):
         if existing:
             expense.category=existing.name
         else:
-            db.session.add(Category(name=new_category,user_id=current_user_id))    
+            db.session.add(Category(name=new_category,user_id=current_user_id))
             expense.category=new_category
-                          
+
 
     if 'amount' in data:
         try:
@@ -205,9 +205,8 @@ def delete_expense(expense_id):
         return jsonify({
         "success":True,
         "message":"Expense deleted Successfully"
-    }),200 
+    }),200
     except Exception:
         db.session.rollback()
         current_app.logger.exception("DB Commit Failed")
         return jsonify({"success": False, "message": "Internal Server Error"}), 500
-       

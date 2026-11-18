@@ -16,13 +16,13 @@ def add_income():
             "success":False,
             "message":"Request Body is required"
         }),400
-    source = (data.get('source') or '').strip()            
+    source = (data.get('source') or '').strip()
     raw_amount=data.get('amount')
     try:
         amount=float(raw_amount) if raw_amount is not None else None
     except (TypeError,ValueError):
          return  jsonify({"success": False, "message": "Amount must be a number"}), 400
-           
+
     description=data.get('description')
 
     if not source or amount is None :
@@ -43,7 +43,7 @@ def add_income():
             return jsonify({
                 "success":False,
                 "message":"Only 200 characters are allowed"
-            }),400            
+            }),400
     if amount<=0:
         return jsonify({
             "success":False,
@@ -56,7 +56,7 @@ def add_income():
         amount=amount,
         description=description,
         user_id=current_user_id
-    )    
+    )
 
     db.session.add(new_income)
     try:
@@ -113,22 +113,22 @@ def update_income(income_id):
     id=income_id,
     user_id=current_user_id
 ).first()
-    
+
     if not income:
         return jsonify ({
             "success":False,
             "message":"Income not found"
         }),404
     if "source" in data:
-        source = (data.get("source") or "").strip()       
-        if not source:                                     
+        source = (data.get("source") or "").strip()
+        if not source:
            return jsonify({"success": False, "message": "Source cannot be empty"}), 400
         if len(source)>100:
             return jsonify({
                 "success":False,
                 "message":"Only 100 characters are allowed"
             }),400
-        income.source=source    
+        income.source=source
     if "amount" in data:
         raw_amount=data.get("amount")
         try:
@@ -140,7 +140,7 @@ def update_income(income_id):
                 "success":False,
                 "message":"Amount cannot be zero or negative"
             })      ,400
-        income.amount=amount    
+        income.amount=amount
     if "description" in data:
         description=data.get("description")
         if description is not None:
@@ -150,7 +150,7 @@ def update_income(income_id):
                 "success":False,
                 "message":"Only 200 characters are allowed"
             })   ,400
-        income.description=description    
+        income.description=description
     try:
        db.session.commit()
        return jsonify({
@@ -166,7 +166,7 @@ def update_income(income_id):
     }), 500
 
 
-#delete income 
+#delete income
 @income_bp.route("/income/delete/<int:income_id>",methods=['DELETE'])
 @jwt_required()
 @limiter.limit("25 per minute",key_func=lambda:get_jwt_identity())

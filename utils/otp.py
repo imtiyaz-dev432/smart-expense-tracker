@@ -4,7 +4,8 @@ import requests  #can be used for communicating with the 3rd party api's
 from celery import shared_task
 
 
-@shared_task() #Bhai, @shared_task — ek decorator jo function ko Celery task banata hai — bina app instance se bound kiye
+@shared_task() #Bhai, @shared_task — ek decorator jo function
+# ko Celery task banata hai — bina app instance se bound kiye
 def send_async_email(email, subject, body):
     try:
         api_key = os.getenv("BREVO_API_KEY")
@@ -22,7 +23,9 @@ def send_async_email(email, subject, body):
         payload = {
             "sender": {
                 "name": from_name,
-                "email": from_email    #This is strictly dictated by the Brevo API design. Email APIs are built to handle bulk sends, meaning they expect an array (a list) of multiple recipients
+                "email": from_email    #This is strictly dictated by the Brevo API design.
+                # Email APIs are built to handle bulk sends, meaning they expect an array
+                # #(a list) of multiple recipients
             },
             "to": [
                 {
@@ -40,16 +43,17 @@ def send_async_email(email, subject, body):
         }
 
 
-        response = requests.post(url, json=payload, headers=headers, timeout=10) #it send the payload to  brevo 
+        response = requests.post(url, json=payload, headers=headers, timeout=10) #it send the
+        #payload to  brevo
         print(f"🔍 Brevo Status: {response.status_code}")
         print(f"🔍 Brevo Body: {response.text}")
 
-       
+
         if response.status_code not in [200, 201, 202]:
             print(f"❌ Email FAILED. Status: {response.status_code}, Body: {response.text}")
             return   # ← ye add kar
 
-            
+
 
         print("Email sent successfully to:", email)
 

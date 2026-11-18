@@ -178,4 +178,3 @@ def monthly_report():
         "total_lend": float(lend),
         "total_borrow": float(borrow),
     }), 200
-    

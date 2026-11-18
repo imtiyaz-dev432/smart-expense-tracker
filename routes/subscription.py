@@ -40,10 +40,10 @@ def add_subscription():
         return jsonify({
             "success":False,
             "message":"Note too long (max 100 char)"
-        }) ,400  
+        }) ,400
     if len(name) > 100:
        return jsonify({"success": False, "message": "Name too long (max 100 chars)"}), 400
-    
+
     if amount<=0:
         return jsonify({
             "success":False,
@@ -55,13 +55,13 @@ def add_subscription():
             "success":False,
             "message": "Billing cycle must be monthly, yearly or weekly"
         }), 400
-       
+
     try:
        next_billing_date_obj = datetime.strptime(next_billing_date, "%Y-%m-%d").replace(tzinfo=UTC)
        if next_billing_date_obj <= datetime.now(UTC):
                 return jsonify({"success": False, "message": "next_billing_date must be in the future"}), 400
     except (ValueError, TypeError):
-        return jsonify({"success": False, "message": "next_billing_date must be YYYY-MM-DD"}), 400    
+        return jsonify({"success": False, "message": "next_billing_date must be YYYY-MM-DD"}), 400
     try:
         new_subscription = Subscription(
         name=name,
@@ -96,7 +96,7 @@ def get__subscription():
     subscribes=Subscription.query.filter_by(
         user_id=current_user_id
     ).order_by(Subscription.next_billing_date.asc()).all()
-    
+
     subscription_list=[]
 
     for subscribe in subscribes:
@@ -118,8 +118,8 @@ def get__subscription():
         "message":subscription_list
     })    ,200
 
-#update subscription 
-@subscribe_bp.route("/subscription/update/<int:subscription_id>", methods=["PATCH"])  
+#update subscription
+@subscribe_bp.route("/subscription/update/<int:subscription_id>", methods=["PATCH"])
 @jwt_required()
 @limiter.limit("25 per minute", key_func=lambda: get_jwt_identity())
 def update_subscription(subscription_id):
@@ -132,7 +132,7 @@ def update_subscription(subscription_id):
         id=subscription_id, user_id=current_user_id
     ).first()
     if not subscription:
-        return jsonify({"success": False, "message": "Subscription not found"}), 404   
+        return jsonify({"success": False, "message": "Subscription not found"}), 404
     if "name" in data:
         raw = data.get("name")
         if raw is None:
@@ -154,12 +154,12 @@ def update_subscription(subscription_id):
             return jsonify({"success": False, "message": "Amount must be a number"}), 400
         if amount <= 0:
             return jsonify({"success": False, "message": "Amount must be greater than zero"}), 400
-        subscription.amount = amount                 
+        subscription.amount = amount
     if "billing_cycle" in data:
         raw = data.get("billing_cycle")
         if raw is None:
             return jsonify({"success": False, "message": "billing_cycle cannot be null"}), 400
-        cycle = str(raw).strip().lower()                          
+        cycle = str(raw).strip().lower()
         if cycle not in ("monthly", "yearly", "weekly"):
             return jsonify({
                 "success": False,
@@ -172,10 +172,10 @@ def update_subscription(subscription_id):
         if raw is None:
             return jsonify({"success": False, "message": "next_billing_date cannot be null"}), 400
         try:
-            due = datetime.strptime(raw, "%Y-%m-%d").replace(tzinfo=UTC)   
+            due = datetime.strptime(raw, "%Y-%m-%d").replace(tzinfo=UTC)
         except (ValueError, TypeError):
             return jsonify({"success": False, "message": "next_billing_date must be YYYY-MM-DD"}), 400
-        if due <= datetime.now(UTC):                                       
+        if due <= datetime.now(UTC):
             return jsonify({"success": False, "message": "next_billing_date must be in the future"}), 400
         subscription.next_billing_date = due
 
@@ -193,16 +193,16 @@ def update_subscription(subscription_id):
     if "note" in data:
         raw = data.get("note")
         if raw is None:
-            subscription.note = None                                  
+            subscription.note = None
         else:
             note = str(raw).strip()
-            if len(note) > 100:                                       
+            if len(note) > 100:
                 return jsonify({"success": False, "message": "Note too long (max 150 chars)"}), 400
             subscription.note = note or None
     try:
         db.session.commit()
     except Exception:
-        db.session.rollback()                                          
+        db.session.rollback()
         current_app.logger.exception("Subscription update failed")
         return jsonify({"success": False, "message": "Something went wrong"}), 500
 

@@ -51,22 +51,22 @@ def verify_otp():
         return jsonify({
             "success":False,
             "message":"Something went wrong"
-        }),500   
+        }),500
     if not stored_otp:
         return jsonify({
             "success": False,
             "message": "OTP expired or not found"
         }), 400
     if isinstance(stored_otp,bytes):
-        stored_orp_hash=stored_otp.decode('utf-8')    
+        stored_orp_hash=stored_otp.decode('utf-8')
     else:
         stored_orp_hash=stored_otp
     if not verify_hashed_otp(stored_orp_hash,otp):
         return jsonify({
             "success": False,
-            "message": "Invalid OTP"    
-        }), 400 
-    try:    
+            "message": "Invalid OTP"
+        }), 400
+    try:
        user.is_verified = True
        db.session.commit()
 
@@ -78,10 +78,10 @@ def verify_otp():
             "message": "Something went wrong. Please try again later."
         }), 500
     try:
-        redis_client.delete(f"otp:verification:{otp_key}")    
+        redis_client.delete(f"otp:verification:{otp_key}")
     except Exception:
         current_app.logger.exception(
-            "OTP verify: Redis delete failed email=%s", email)       
+            "OTP verify: Redis delete failed email=%s", email)
 
     return jsonify({
         "success": True,
@@ -111,7 +111,7 @@ def resend_otp():
     elif email:
         user= User.query.filter_by(email=email).first()
     elif mobile_no:
-        user= User.query.filter_by(mobile_no=mobile_no).first()      
+        user= User.query.filter_by(mobile_no=mobile_no).first()
     if not user:
         return jsonify({
             "success":False,
@@ -134,7 +134,7 @@ def resend_otp():
     try:
         send_otp_mail(user.email, plain_otp, purpose="verification")
     except Exception:
-        redis_client.delete(f"otp:verification:{otp_key}")              
+        redis_client.delete(f"otp:verification:{otp_key}")
         current_app.logger.exception("OTP email failed for %s", otp_key)
         return jsonify({"success": False, "message": "Failed to send OTP"}), 500
 

@@ -28,9 +28,9 @@ def test_verify_otp_mobile_success(client, database, seed_otp, make_unverified_u
 @pytest.mark.integration
 def test_verify_otp_missing_body_returns_400(client):
     r=client.post("/otp/verify-otp")
-    assert r.status_code==400 
+    assert r.status_code==400
     body=r.get_json()
-    assert "request body" in body["message"].lower()   
+    assert "request body" in body["message"].lower()
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
@@ -50,7 +50,7 @@ def  test_verify_otp_invalid_email_format_returns_400(make_unverified_user,seed_
 
 @pytest.mark.integration
 def test_both_fields_missing_returns_400 (client):
-    
+
     r=client.post("/otp/verify-otp",json={"otp":"123456"})
     assert r.status_code==400
     body=r.get_json()
@@ -69,7 +69,7 @@ def test_verify_otp_user_not_found_email_returns_400 (client):
 def test_verify_otp_expired_returns_400(seed_otp,client,fake_redis,make_unverified_user):
     email="original123@test.com"
     make_unverified_user(email)
-    otp=seed_otp(email,otp="654321",ttl=1)
+    seed_otp(email,otp="654321",ttl=1)
     time.sleep(2)
     r = client.post("/otp/verify-otp", json={
         "email": email,
@@ -84,7 +84,7 @@ def test_verify_otp_expired_returns_400(seed_otp,client,fake_redis,make_unverifi
 def test_verify_otp_wrong_otp_returns_400 (client,make_unverified_user,seed_otp):
     email="alice@test.com"
     make_unverified_user(email)
-    otp=seed_otp(email,otp="123456")
+    seed_otp(email,otp="123456")
     r = client.post("/otp/verify-otp", json={
         "email": email,
         "otp": "456123",

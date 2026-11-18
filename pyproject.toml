@@ -1,14 +1,18 @@
 [tool.ruff]
-line-length = 100
+line-length = 120
 target-version = "py311"
 exclude = [".venv", "migrations"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "B", "UP"]
 ignore = [
-    "BLE001",    # except Exception — Flask routes + Redis fallback mein intentional
+    "BLE001",    # except Exception — Flask routes + Redis fallback intentional
     "RUF012",    # mutable class default — Flask Config pattern
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"test/**" = ["E501"]     # test signatures + client calls — readability ke liye
+"tests/**" = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["config", "models", "utils", "routes", "schemas", "test"]

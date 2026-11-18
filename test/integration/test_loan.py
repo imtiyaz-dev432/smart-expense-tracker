@@ -231,7 +231,7 @@ def test_update_loan_past_due_date(login_get_token,client,database,make_valid_lo
     loan=Loan.query.filter_by(loan_name="Home Loan").first()
     r=client.patch(f"/loan/update/{loan.id}",json={"due_date":"2020-01-01"},headers={"Authorization":f"Bearer {token}"})
     assert r.status_code==400
-    
+
 @pytest.mark.integration
 def test_update_loan_emi_greater_than_total(login_get_token,client,database,make_valid_loan_payload):
     token,_=login_get_token(username="Poki@!22",password="Valid@!234")

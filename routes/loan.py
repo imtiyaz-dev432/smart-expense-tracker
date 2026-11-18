@@ -46,21 +46,21 @@ def add_loan():
         return jsonify({
             "success":False,
             "message": "Loan name too long (max 100 characters)"}),400
-    
+
     if total_amount<=0 or  monthly_emi<=0:
         return jsonify({
             "success":False,
             "message":"All amount's must be positive"
         })    ,400
-        
-    
+
+
     if total_amount<=monthly_emi:
         return jsonify({
             "success":False,
             "message":"Monthly EMI must be less than total amount"
         }),400
     current_user_id=int(get_jwt_identity())
-    
+
     try:
         due_date_obj = datetime.strptime(due_date, "%Y-%m-%d").replace(tzinfo=UTC)
     except (ValueError, TypeError):
@@ -78,7 +78,7 @@ def add_loan():
         remaining_amount=total_amount,
         due_date=due_date_obj,
         user_id=current_user_id
-    )    
+    )
 
         db.session.add(new_loan)
         db.session.commit()
@@ -132,7 +132,7 @@ def update_loan(loan_id):
                 "message":"Request Body is required"
             }),400
         loan=Loan.query.filter_by(id=loan_id,user_id=current_user_id).first()
-        
+
         if not loan:
             return jsonify({
                 "success":False,
@@ -144,7 +144,7 @@ def update_loan(loan_id):
         if "loan_name" in data:
             raw = data.get("loan_name")
             loan_name = str(raw).strip() if raw is not None else ""
-    
+
             if not loan_name:
                 return jsonify({
             "success": False,
@@ -169,7 +169,7 @@ def update_loan(loan_id):
         if "monthly_emi" in data:
             emi=data.get("monthly_emi")
             try:
-                new_emi=float(emi)    
+                new_emi=float(emi)
             except ( TypeError, ValueError):
                return jsonify({"success": False, "message": "Monthly EMI must be a number"}), 400
 
@@ -184,7 +184,7 @@ def update_loan(loan_id):
                 "message":"Total cannot be less than remaining"
             }),400
 
-        
+
         if "due_date" in data:
           try:
             due = datetime.strptime(data["due_date"], "%Y-%m-%d").replace(tzinfo=UTC)
@@ -199,14 +199,14 @@ def update_loan(loan_id):
             if s not in ("active", "closed", "defaulted"):
               return jsonify({"success": False, "message": "Invalid status"}), 400
             loan.status = s
-        
+
         try:
             loan.monthly_emi=new_emi
             loan.total_amount=new_total
             db.session.commit()
         except Exception:
             db.session.rollback()
-            current_app.logger.exception("Db commit is failed")    
+            current_app.logger.exception("Db commit is failed")
             return jsonify({
                 "success":False,
                 "message":"Something Went Wrong"
@@ -240,7 +240,7 @@ def delete_loan(loan_id):
         return jsonify({
             "success":False,
             "message":"Something went wrong"
-        })  ,500   
+        })  ,500
     return jsonify({
         "success":True,
         "message":"loan deleted successfully"
@@ -273,7 +273,7 @@ def repayment(loan_id):
                 "success":False,
                 "message":"Paid amount must be number"
             })    ,400
-    
+
 
     if paid_amount<=0:
         return jsonify({
@@ -297,7 +297,7 @@ def repayment(loan_id):
             "message":"This loan is already completed"
         })    ,400
     m=float(loan.remaining_amount)
-    
+
     if paid_amount>m:
         return jsonify({
             "success":False,
@@ -308,7 +308,7 @@ def repayment(loan_id):
 
     if loan.remaining_amount==0:
         loan.status='closed'
-    
+
     try:
         db.session.commit()
     except Exception:

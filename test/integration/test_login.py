@@ -20,8 +20,8 @@ def test_login_body_missing(client,make_verified_user):
     make_verified_user(username=username,password=password)
     r = client.post("/auth/login")
     assert r.status_code == 400
-    
-    
+
+
 @pytest.mark.integration
 def test_login_user_not_found_returns_401(client):
     username="verified user"

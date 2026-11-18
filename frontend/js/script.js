@@ -23,7 +23,7 @@ const ENDPOINTS = {
   incomeUpdate: "/income/update",
   incomeDelete: "/income/delete",
   aiSuggestion: "/ai/suggestion",
-  expenseAdd: "/expense",
+  expenseAdd: "/expense/add",
   expenseAll: "/expense/all",
   expenseUpdate: "/expense/update",
   expenseDelete: "/expense/delete",
@@ -38,7 +38,7 @@ borrowUpdate: "/borrow/update",
 borrowDelete: "/borrow/delete",
 borrowMarkPaid: "/borrow/mark-paid",
 
-loanAdd: "/loan",
+loanAdd: "/loan/add",
 loanAll: "/loan/get",
 loanUpdate: "/loan/update",
 loanDelete: "/loan/delete",
@@ -516,10 +516,7 @@ function setupLogin() {
   });
 }
      
-    
-
-
-  //  FORGOT PASSWORD LOGIC
+// FORGOT PASSWORD LOGIC
 
 function setupForgotPassword() {
   const forgotForm = qs("#forgotForm");
@@ -551,10 +548,17 @@ function setupForgotPassword() {
       return;
     }
 
+    // Identify whether input is email or mobile number
+    const payload = identifier.includes("@")
+      ? { email: identifier }
+      : { mobile_no: identifier };
+
     try {
-      const data = await apiRequest(ENDPOINTS.forgotPassword, "POST", {
-        identifier: identifier
-      });
+      const data = await apiRequest(
+        ENDPOINTS.forgotPassword,
+        "POST",
+        payload
+      );
 
       console.log("FORGOT PASSWORD RESPONSE:", data);
 
@@ -578,8 +582,9 @@ function setupForgotPassword() {
 }
 
 /* 
+/*
    RESET PASSWORD LOGIC
- */
+*/
 
 function setupResetPassword() {
   const identifierInput = qs("#identifier");
@@ -613,26 +618,38 @@ function setupResetPassword() {
       return;
     }
 
+    // Read input values
     const identifier = identifierInput.value.trim();
     const otp = otpInput.value.trim();
     const newPassword = passwordInput.value;
 
+    // Validate required fields
     if (!identifier || !otp || !newPassword) {
       showMessage("resetMessage", "All fields are required", "error");
       return;
     }
 
-    if (otp.length !== 6) {
+    // Validate OTP
+    if (!/^\d{6}$/.test(otp)) {
       showMessage("resetMessage", "OTP must be 6 digits", "error");
       return;
     }
 
+    // Identify email or mobile number
+    const identifierPayload = identifier.includes("@")
+      ? { email: identifier }
+      : { mobile_no: identifier };
+
     try {
-      const data = await apiRequest(ENDPOINTS.resetPassword, "POST", {
-        identifier: identifier,
-        otp: otp,
-        new_password: newPassword
-      });
+      const data = await apiRequest(
+        ENDPOINTS.resetPassword,
+        "POST",
+        {
+          ...identifierPayload,
+          otp: otp,
+          new_password: newPassword
+        }
+      );
 
       console.log("RESET PASSWORD RESPONSE:", data);
 
@@ -654,6 +671,7 @@ function setupResetPassword() {
     }
   });
 }
+
 
 
   //  DASHBOARD LOGIC
@@ -884,27 +902,64 @@ async function loadIncomeRecords() {
   }
 }
 
-async function editIncome(id) {
-  const source = prompt("Enter updated source:");
-  const amount = prompt("Enter updated amount:");
-  const description = prompt("Enter updated description:");
 
-  if (!source || !amount) {
-    alert("Source and amount are required");
+async function editIncome(id) {
+  const source = prompt("Enter updated source (leave blank to keep unchanged):");
+
+  if (source === null) {
     return;
   }
 
-  if (Number(amount) <= 0) {
-    alert("Amount must be greater than 0");
+  const amount = prompt("Enter updated amount (leave blank to keep unchanged):");
+
+  if (amount === null) {
+    return;
+  }
+
+  const description = prompt("Enter updated description (leave blank to keep unchanged):");
+
+  if (description === null) {
+    return;
+  }
+
+  // Build payload only with fields that need updating
+  const payload = {};
+
+  if (source.trim()) {
+    payload.source = source.trim();
+  }
+
+  if (amount.trim()) {
+    const numericAmount = Number(amount);
+
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      alert("Amount must be a valid number greater than 0");
+      return;
+    }
+
+    payload.amount = numericAmount;
+  }
+
+  if (description.trim()) {
+    payload.description = description.trim();
+  }
+
+  if (Object.keys(payload).length === 0) {
+    alert("Please provide at least one field to update");
+    return;
+  }
+
+  if (payload.description && payload.description.length > 200) {
+    alert("Description cannot exceed 200 characters");
     return;
   }
 
   try {
-    const data = await authApiRequest(`${ENDPOINTS.incomeUpdate}/${id}`, "PUT", {
-      source: source,
-      amount: Number(amount),
-      description: description || ""
-    });
+    const data = await authApiRequest(
+      `${ENDPOINTS.incomeUpdate}/${id}`,
+      "PATCH",
+      payload
+    );
 
     console.log("UPDATE INCOME RESPONSE:", data);
 
@@ -917,6 +972,7 @@ async function editIncome(id) {
     console.log("Update income error:", error);
   }
 }
+
 
 async function deleteIncome(id) {
   const confirmDelete = confirm("Are you sure you want to delete this income?");
@@ -1165,28 +1221,59 @@ async function loadExpenseRecords() {
 }
 
 async function editExpense(id) {
-  const title = prompt("Enter updated title:");
-  const amount = prompt("Enter updated amount:");
-  const category = prompt("Enter updated category:");
-  const description = prompt("Enter updated description:");
+  const title = prompt("Enter updated title (leave blank to keep unchanged):");
 
-  if (!title || !amount || !category) {
-    alert("Title, amount and category are required");
-    return;
+  if (title === null) return;
+
+  const amount = prompt("Enter updated amount (leave blank to keep unchanged):");
+
+  if (amount === null) return;
+
+  const category = prompt("Enter updated category (leave blank to keep unchanged):");
+
+  if (category === null) return;
+
+  const description = prompt("Enter updated description (leave blank to keep unchanged):");
+
+  if (description === null) return;
+
+  // Build PATCH payload with only changed fields
+  const payload = {};
+
+  if (title.trim()) {
+    payload.title = title.trim();
   }
 
-  if (Number(amount) <= 0) {
-    alert("Amount must be greater than 0");
+  if (amount.trim()) {
+    const numericAmount = Number(amount);
+
+    if (!Number.isFinite(numericAmount) || numericAmount < 0) {
+      alert("Amount must be a valid number and cannot be negative");
+      return;
+    }
+
+    payload.amount = numericAmount;
+  }
+
+  if (category.trim()) {
+    payload.category = category.trim();
+  }
+
+  if (description.trim()) {
+    payload.description = description.trim();
+  }
+
+  if (Object.keys(payload).length === 0) {
+    alert("Please provide at least one field to update");
     return;
   }
 
   try {
-    const data = await authApiRequest(`${ENDPOINTS.expenseUpdate}/${id}`, "PUT", {
-      title: title,
-      amount: Number(amount),
-      category: category,
-      description: description || ""
-    });
+    const data = await authApiRequest(
+      `${ENDPOINTS.expenseUpdate}/${id}`,
+      "PATCH",
+      payload
+    );
 
     console.log("UPDATE EXPENSE RESPONSE:", data);
 
@@ -1427,38 +1514,81 @@ async function loadUpcomingSubscriptions() {
   }
 }
 
+
 async function editSubscription(id) {
-  const name = prompt("Enter updated subscription name:");
-  const amount = prompt("Enter updated amount:");
-  const billingCycle = prompt("Enter billing cycle: weekly, monthly or yearly");
-  const nextBillingDate = prompt("Enter next billing date YYYY-MM-DD:");
-  const note = prompt("Enter updated note:");
+  const name = prompt("Enter updated name (blank = unchanged):");
 
-  if (!name || !amount || !billingCycle || !nextBillingDate) {
-    alert("Name, amount, billing cycle and next billing date are required");
-    return;
+  if (name === null) return;
+
+  const amount = prompt("Enter updated amount (blank = unchanged):");
+
+  if (amount === null) return;
+
+  const billingCycle = prompt(
+    "Enter billing cycle: monthly, yearly or weekly (blank = unchanged)"
+  );
+
+  if (billingCycle === null) return;
+
+  const nextBillingDate = prompt(
+    "Enter next billing date YYYY-MM-DD (blank = unchanged):"
+  );
+
+  if (nextBillingDate === null) return;
+
+  const note = prompt(
+    "Enter updated note (blank = clear note, Cancel = unchanged):"
+  );
+
+  const payload = {};
+
+  if (name.trim()) {
+    payload.name = name.trim();
   }
 
-  if (Number(amount) <= 0) {
-    alert("Amount must be greater than 0");
-    return;
+  if (amount.trim()) {
+    const numericAmount = Number(amount);
+
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      alert("Amount must be a valid number greater than zero");
+      return;
+    }
+
+    payload.amount = numericAmount;
   }
 
-  const allowedCycles = ["weekly", "monthly", "yearly"];
+  if (billingCycle.trim()) {
+    const cycle = billingCycle.trim().toLowerCase();
+    const allowedCycles = ["monthly", "yearly", "weekly"];
 
-  if (!allowedCycles.includes(billingCycle.toLowerCase())) {
-    alert("Billing cycle must be weekly, monthly or yearly");
+    if (!allowedCycles.includes(cycle)) {
+      alert("Billing cycle must be monthly, yearly or weekly");
+      return;
+    }
+
+    payload.billing_cycle = cycle;
+  }
+
+  if (nextBillingDate.trim()) {
+    payload.next_billing_date = nextBillingDate.trim();
+  }
+
+  // Cancel means unchanged; blank means clear the note
+  if (note !== null) {
+    payload.note = note.trim();
+  }
+
+  if (Object.keys(payload).length === 0) {
+    alert("Please provide at least one field to update");
     return;
   }
 
   try {
-    const data = await authApiRequest(`${ENDPOINTS.subscriptionUpdate}/${id}`, "PUT", {
-      name: name,
-      amount: Number(amount),
-      billing_cycle: billingCycle.toLowerCase(),
-      next_billing_date: nextBillingDate,
-      note: note || ""
-    });
+    const data = await authApiRequest(
+      `${ENDPOINTS.subscriptionUpdate}/${id}`,
+      "PATCH",
+      payload
+    );
 
     console.log("UPDATE SUBSCRIPTION RESPONSE:", data);
 
@@ -1524,11 +1654,11 @@ function setupBorrowForm() {
 
     const personName = qs("#person_name").value.trim();
     const amount = Number(qs("#amount").value);
-    const type = qs("#type").value;
+    const borrow_type = qs("#type").value;
     const dueDate = qs("#due_date").value;
     const note = qs("#note").value.trim();
 
-    if (!personName || !amount || !type) {
+    if (!personName || !amount || !borrow_type) {
       showMessage("borrowMessage", "Person name, amount and type are required", "error");
       return;
     }
@@ -1542,7 +1672,7 @@ function setupBorrowForm() {
       const data = await authApiRequest(ENDPOINTS.borrowAdd, "POST", {
         person_name: personName,
         amount: amount,
-        type: type,
+        borrow_type: borrow_type,
         due_date: dueDate,
         note: note
       });
@@ -1579,10 +1709,10 @@ async function loadBorrowRecords() {
     console.log("BORROW/LEND RECORDS RESPONSE:", data);
 
     const records =
+      data.borrow ||
       data.borrows ||
       data.borrow_records ||
       data.records ||
-      data.message ||
       [];
 
     if (!Array.isArray(records) || records.length === 0) {
@@ -1645,12 +1775,11 @@ async function loadBorrowRecords() {
   }
 }
 
+
 async function editBorrow(id) {
   const personName = prompt("Enter updated person name:");
   const amount = prompt("Enter updated amount:");
   const type = prompt("Enter type: borrowed or lent");
-  const dueDate = prompt("Enter due date YYYY-MM-DD:");
-  const note = prompt("Enter updated note:");
 
   if (!personName || !amount || !type) {
     alert("Person name, amount and type are required");
@@ -1664,19 +1793,36 @@ async function editBorrow(id) {
 
   const allowedTypes = ["borrowed", "lent"];
 
-  if (!allowedTypes.includes(type.toLowerCase())) {
+  if (!allowedTypes.includes(type.trim().toLowerCase())) {
     alert("Type must be borrowed or lent");
     return;
   }
 
+  const dueDate = prompt("Enter due date YYYY-MM-DD (leave empty to keep unchanged):");
+  const note = prompt("Enter updated note:");
+
+  const payload = {
+    person_name: personName.trim(),
+    amount: Number(amount),
+    borrow_type: type.trim().toLowerCase()
+  };
+
+  // Only send due_date when user provides one
+  if (dueDate && dueDate.trim()) {
+    payload.due_date = dueDate.trim();
+  }
+
+  // Keep existing note if user clicks Cancel
+  if (note !== null) {
+    payload.note = note.trim();
+  }
+
   try {
-    const data = await authApiRequest(`${ENDPOINTS.borrowUpdate}/${id}`, "PUT", {
-      person_name: personName,
-      amount: Number(amount),
-      type: type.toLowerCase(),
-      due_date: dueDate || "",
-      note: note || ""
-    });
+    const data = await authApiRequest(
+      `${ENDPOINTS.borrowUpdate}/${id}`,
+      "PATCH",
+      payload
+    );
 
     console.log("UPDATE BORROW/LEND RESPONSE:", data);
 
@@ -1690,6 +1836,7 @@ async function editBorrow(id) {
   }
 }
 
+
 async function markBorrowPaid(id) {
   const confirmPaid = confirm("Mark this record as paid?");
 
@@ -1698,7 +1845,7 @@ async function markBorrowPaid(id) {
   }
 
   try {
-    const data = await authApiRequest(`${ENDPOINTS.borrowMarkPaid}/${id}`, "PUT");
+    const data = await authApiRequest(`${ENDPOINTS.borrowMarkPaid}/${id}`, "PATCH");
 
     console.log("MARK BORROW/LEND PAID RESPONSE:", data);
 
@@ -1739,13 +1886,6 @@ async function deleteBorrow(id) {
   //  LOAN PAGE LOGIC
 
 
-function setupLoanPage() {
-  setupSidebarToggle();
-  setupLogout();
-  setupLoanForm();
-  loadLoanRecords();
-}
-
 function setupLoanForm() {
   const loanForm = qs("#loanForm");
 
@@ -1762,35 +1902,32 @@ function setupLoanForm() {
     console.log("ADD LOAN BUTTON CLICKED");
 
     const loanName = qs("#loan_name").value.trim();
-    const totalAmount = Number(qs("#total_amount").value);
-    const monthlyEmi = Number(qs("#monthly_emi").value);
-    const remainingAmount = Number(qs("#remaining_amount").value);
+    const totalAmountValue = qs("#total_amount").value;
+    const monthlyEmiValue = qs("#monthly_emi").value;
     const dueDate = qs("#due_date").value;
 
-    if (!loanName || !totalAmount || !monthlyEmi || remainingAmount === "" || !dueDate) {
+    if (!loanName || !totalAmountValue || !monthlyEmiValue || !dueDate) {
       showMessage("loanMessage", "All fields are required", "error");
       return;
     }
 
-    if (totalAmount <= 0) {
+    const totalAmount = Number(totalAmountValue);
+    const monthlyEmi = Number(monthlyEmiValue);
+
+    if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
       showMessage("loanMessage", "Total amount must be greater than 0", "error");
       return;
     }
 
-    if (monthlyEmi <= 0) {
+    if (!Number.isFinite(monthlyEmi) || monthlyEmi <= 0) {
       showMessage("loanMessage", "Monthly EMI must be greater than 0", "error");
       return;
     }
 
-    if (remainingAmount < 0) {
-      showMessage("loanMessage", "Remaining amount cannot be negative", "error");
-      return;
-    }
-
-    if (remainingAmount > totalAmount) {
+    if (monthlyEmi >= totalAmount) {
       showMessage(
         "loanMessage",
-        "Remaining amount cannot be greater than total amount",
+        "Monthly EMI must be less than total amount",
         "error"
       );
       return;
@@ -1801,7 +1938,6 @@ function setupLoanForm() {
         loan_name: loanName,
         total_amount: totalAmount,
         monthly_emi: monthlyEmi,
-        remaining_amount: remainingAmount,
         due_date: dueDate
       });
 
@@ -1822,6 +1958,7 @@ function setupLoanForm() {
     }
   });
 }
+
 
 async function loadLoanRecords() {
   const loanTable = qs("#loanTable");
@@ -1899,39 +2036,67 @@ async function loadLoanRecords() {
   }
 }
 
-async function editLoan(id, totalAmount) {
-  const loanName = prompt("Enter updated loan name:");
-  const monthlyEmi = prompt("Enter updated monthly EMI:");
-  const remainingAmount = prompt("Enter updated remaining amount:");
-  const dueDate = prompt("Enter updated due date YYYY-MM-DD:");
 
-  if (!loanName || !monthlyEmi || remainingAmount === null || !dueDate) {
-    alert("All fields are required");
-    return;
+async function editLoan(id) {
+  const loanName = prompt("Enter updated loan name (blank = unchanged):");
+
+  if (loanName === null) return;
+
+  const totalAmount = prompt("Enter updated total amount (blank = unchanged):");
+
+  if (totalAmount === null) return;
+
+  const monthlyEmi = prompt("Enter updated monthly EMI (blank = unchanged):");
+
+  if (monthlyEmi === null) return;
+
+  const dueDate = prompt("Enter updated due date YYYY-MM-DD (blank = unchanged):");
+
+  if (dueDate === null) return;
+
+  const payload = {};
+
+  if (loanName.trim()) {
+    payload.loan_name = loanName.trim();
   }
 
-  if (Number(monthlyEmi) <= 0) {
-    alert("Monthly EMI must be greater than 0");
-    return;
+  if (totalAmount.trim()) {
+    const numericTotal = Number(totalAmount);
+
+    if (!Number.isFinite(numericTotal) || numericTotal <= 0) {
+      alert("Total amount must be a valid positive number");
+      return;
+    }
+
+    payload.total_amount = numericTotal;
   }
 
-  if (Number(remainingAmount) < 0) {
-    alert("Remaining amount cannot be negative");
-    return;
+  if (monthlyEmi.trim()) {
+    const numericEmi = Number(monthlyEmi);
+
+    if (!Number.isFinite(numericEmi) || numericEmi <= 0) {
+      alert("Monthly EMI must be a valid positive number");
+      return;
+    }
+
+    payload.monthly_emi = numericEmi;
   }
 
-  if (Number(remainingAmount) > Number(totalAmount)) {
-    alert("Remaining amount cannot be greater than total amount");
+  if (dueDate.trim()) {
+    payload.due_date = dueDate.trim();
+  }
+
+  if (Object.keys(payload).length === 0) {
+    alert("Please provide at least one field to update");
     return;
   }
 
   try {
-    const data = await authApiRequest(`${ENDPOINTS.loanUpdate}/${id}`, "PUT", {
-      loan_name: loanName,
-      monthly_emi: Number(monthlyEmi),
-      remaining_amount: Number(remainingAmount),
-      due_date: dueDate
-    });
+    const data = await authApiRequest(
+      `${ENDPOINTS.loanUpdate}/${id}`,
+      "PATCH",
+      payload
+    );
 
     console.log("UPDATE LOAN RESPONSE:", data);
 

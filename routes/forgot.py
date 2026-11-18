@@ -37,7 +37,7 @@ def forgot_password():
                 "message":"Invalid email format"
             })  ,400
         user=User.query.filter_by(email=email).first()
-    
+
     if mobile_no:
         mobile_no=mobile_no.strip()
         if not is_valid_mobile(mobile_no):
@@ -50,14 +50,14 @@ def forgot_password():
        return jsonify({
         "success": True,
         "message": "If the account exists, a password reset OTP has been sent."
-    }), 200    
-    
+    }), 200
+
     plain_otp = generate_otp()
     hashed_otp = hash_otp(plain_otp)
     try:
         redis_client.setex(f"otp:reset:{user.email}",300,str(hashed_otp))
     except Exception:
-        current_app.logger.exception("OTP:Redis is Down") 
+        current_app.logger.exception("OTP:Redis is Down")
         return jsonify({
             "success":False,
             "message":"Something went wrong"
@@ -72,7 +72,7 @@ def forgot_password():
           "success":False,
           "message":"Error in sending mail"
         }),500
-       
+
     return jsonify({
         "success":True,
         "message": "Reset OTP sent to your registered email"
@@ -110,7 +110,7 @@ def reset():
         if not user:
             return jsonify  ({"success":False,
                 "message":"Invalid credentials or OTP"
-            })    ,400 
+            })    ,400
     if mobile_no:
         mobile_no=mobile_no.strip()
         if not is_valid_mobile(mobile_no):
@@ -122,9 +122,9 @@ def reset():
         if not user:
             return jsonify  ({"success":False,
                 "message":"Invalid credentials or OTP"
-            })    ,400 
-        
-    
+            })    ,400
+
+
     otp = data.get("otp")
     new_password = data.get("new_password")
     if not otp or not new_password:
@@ -137,7 +137,7 @@ def reset():
             "success":False,
              "message":"Password must be at least 8 characters long and include an"
               " uppercase letter, lowercase letter, number, and special"
-              " character (@$!%*?&)" 
+              " character (@$!%*?&)"
         }),400
     try:
         stored_otp=redis_client.get(f"otp:reset:{user.email}")
@@ -152,7 +152,7 @@ def reset():
         "success": False,
         "message": "Invalid OTP or expired"
     }), 400
-    
+
 
     if isinstance(stored_otp,bytes):
         stored_otp_hash=stored_otp.decode('utf-8')
@@ -162,8 +162,8 @@ def reset():
     if not verify_hashed_otp(stored_otp_hash,otp):
         return jsonify({
             "success": False,
-            "message": "Invalid OTP"    
-        }), 400 
+            "message": "Invalid OTP"
+        }), 400
     try:
        user.password = generate_password_hash(new_password)
        db.session.commit()
@@ -177,9 +177,9 @@ def reset():
     try:
         redis_client.delete(f"otp:reset:{user.email}")
     except Exception:
-        current_app.logger.exception("OTP delete failed for %s", user.email)        
+        current_app.logger.exception("OTP delete failed for %s", user.email)
     return jsonify({
-     "success":True,   
+     "success":True,
     "message": "Password reset successfully"
-}), 200 
+}), 200
 

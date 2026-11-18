@@ -25,7 +25,7 @@ def test_add_income_missing_fields(login_get_token,missing,client,build_income_p
      assert r.status_code==400
      body=r.get_json()
      assert body["success"] is False
-   
+
 
 @pytest.mark.integration
 @pytest.mark.parametrize("bad_amount", [-100, "%%$$", "abc"])
@@ -44,7 +44,7 @@ def test_add_income_without_auth( client,build_income_payload):
     payload=build_income_payload()
     r=client.post("/income/add",json=payload)
     assert r.status_code==401
-    
+
 
 @pytest.mark.integration
 def test_add_income_with_fake_token_auth(client,build_income_payload):
@@ -57,7 +57,7 @@ def test_add_income_with_fake_token_auth(client,build_income_payload):
 @pytest.mark.integration
 def test_add_income_empty_body(client,login_get_token,database,build_income_payload):
     token,_=login_get_token(username="Poki@!22",password="Valid@!234")
-    payload=build_income_payload()
+    build_income_payload()
     r=client.post("/income/add",headers={"Authorization":f"Bearer {token}"})
     assert r.status_code==400
     body=r.get_json()

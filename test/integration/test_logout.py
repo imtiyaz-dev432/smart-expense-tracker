@@ -24,4 +24,4 @@ def test_logout_invalid_token_returns_422(client):
     r=client.post("/auth/logout",headers={
         "Authorization": "Bearer fake.invalid.token",})
     assert r.status_code==422
-    
+

@@ -39,7 +39,7 @@ def register():
             "success":False,
             "message":"All fields are required"
         }),400
-    email=email.strip().lower()    
+    email=email.strip().lower()
     mobile_no=mobile_no.strip()
     if not is_valid_email(email):
         return jsonify({
@@ -56,21 +56,21 @@ def register():
             "success":False,
             "message":"Password must be at least 8 characters long and include an"
               " uppercase letter, lowercase letter, number, and special"
-              " character (@$!%*?&)" 
-        }) ,400   
+              " character (@$!%*?&)"
+        }) ,400
     if User.query.filter_by(email=email).first():
         return {"success":False,"message": "User already exists"}, 409
 
     if User.query.filter_by(username=username).first():
-        return {"success":False,"message": "User already exists"}, 409    
+        return {"success":False,"message": "User already exists"}, 409
 
     if User.query.filter_by(mobile_no=mobile_no).first():
-        return {"success":False,"message": "User already exists"}, 409   
+        return {"success":False,"message": "User already exists"}, 409
 
     hashed_password = generate_password_hash(password)
     plain_otp = generate_otp()
     hashed_otp = hash_otp(plain_otp)
-    
+
     try:
       redis_client.setex(
         f"otp:verification:{email}",
@@ -90,7 +90,7 @@ def register():
         password=hashed_password,
         is_verified=False
     )
-    
+
     db.session.add(new_user)
     db.session.flush()
     create_default_categories(new_user)
@@ -99,12 +99,12 @@ def register():
       db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        redis_client.delete(f"otp:verification:{email}")   
-        current_app.logger.warning("Register: duplicate race email=%s mobile=%s", email, mobile_no)     
+        redis_client.delete(f"otp:verification:{email}")
+        current_app.logger.warning("Register: duplicate race email=%s mobile=%s", email, mobile_no)
         return jsonify({
             "success": False,
-            "message": "Email or mobile number is already registered"           
-        }), 409   
+            "message": "Email or mobile number is already registered"
+        }), 409
     except Exception:
         db.session.rollback()
         redis_client.delete(f"otp:verification:{email}")
@@ -114,14 +114,14 @@ def register():
         "message": "Internal Server Error"
     }), 500
     try:
-       send_otp_mail(email, plain_otp, purpose="verification") 
-       otp_sent=True 
+       send_otp_mail(email, plain_otp, purpose="verification")
+       otp_sent=True
     except Exception :
         current_app.logger.exception(
         "Error in sending otp")
-        
+
     return {"message": "User registered successfully","otp_sent":otp_sent}, 201
- 
+
 #Login
 @auth_bp.route("/login", methods=["POST"])
 @limiter.limit("3 per minute")
@@ -138,12 +138,12 @@ def login():
 
     if not username or not password:
         return {"message": "Username and password are required"}, 400
-    
+
     user = User.query.filter_by(username=username).first()
 
     if not user or not check_password_hash(user.password, password):
        return {"success": False, "message": "Invalid credentials"}, 401
-    
+
     if not user.is_verified:
         return {"message": "Please verify your OTP before login"}, 403
 
@@ -172,7 +172,7 @@ def refresh():
 
     return jsonify({
         "access_token": new_access_token
-    }), 200    
+    }), 200
 #logout
 @auth_bp.route("/logout",methods=["POST"])
 @jwt_required()

@@ -51,13 +51,13 @@ def test_borrow_with_fake_token(login_get_token,make_valid_borrow_payload,client
     payload=make_valid_borrow_payload()
     r=client.post("/borrow/add",json=payload,headers={"Authorization":"Bearer fake.invalid.token"})
     assert r.status_code==422
-    
+
 
 
 @pytest.mark.integration
 def test_borrow_without_body(login_get_token,make_valid_borrow_payload,client,database):
     token,_=login_get_token(username="Poki@!23",password="Pokib@12234")
-    payload=make_valid_borrow_payload()
+    make_valid_borrow_payload()
     r=client.post("/borrow/add",headers={"Authorization":f"Bearer {token}"})
     assert r.status_code==400
 
@@ -93,7 +93,7 @@ def test_own_borrow_only(login_get_token,make_valid_borrow_payload,client,databa
     body=r.get_json()
     assert len((body)["borrow"])==2
 
-  
+
 
 @pytest.mark.integration
 def test_get_borrow_with_no_token(database,client,login_get_token,make_valid_borrow_payload):
@@ -103,7 +103,7 @@ def test_get_borrow_with_no_token(database,client,login_get_token,make_valid_bor
 
 
 @pytest.mark.integration
-def test_borrow_with_fake_token(database,client,login_get_token,make_valid_borrow_payload):
+def test_get_borrow_with_fake_token(database,client,login_get_token,make_valid_borrow_payload):
     token,_=login_get_token(username="Poki@!23",password="Pokib@12234")
     r=client.get("/borrow/get",headers={"Authorization":"Bearer fake.invalid.token"})
     assert r.status_code==422
@@ -117,7 +117,7 @@ def test_update_with_success(login_get_token,make_valid_borrow_payload,client,da
     assert r.status_code==201
     borrow=Borrow.query.filter_by(person_name="Rahul").first()
     r=client.patch(f"/borrow/update/{borrow.id}",headers={"Authorization":f"Bearer {token}"},json={"person_name":"Deepanshu","amount":8700})
-    assert r.status_code==200 
+    assert r.status_code==200
     database.session.refresh(borrow)
     assert borrow.person_name=="Deepanshu"
     assert borrow.amount==8700

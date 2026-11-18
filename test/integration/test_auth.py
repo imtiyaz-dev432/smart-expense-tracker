@@ -33,10 +33,10 @@ def test_register_missing_fields(client,missing,mock_send_otp,fake_redis):
 
 
 @pytest.mark.integration
-@pytest.mark.parametrize("bad_mobile",["12345",          
-    "abcdefghij",         
-    "+919876543210",      
-    "98765 43210",        
+@pytest.mark.parametrize("bad_mobile",["12345",
+    "abcdefghij",
+    "+919876543210",
+    "98765 43210",
     "",
 ])
 def test_register_invalid_mobile(client,bad_mobile,mock_send_otp,fake_redis):
@@ -65,11 +65,11 @@ def test_register_invalid_email(client,bad_email,mock_send_otp,fake_redis):
 
 
 @pytest.mark.integration
-@pytest.mark.parametrize("weak_passwd",["short",             
-    "alllowercase1!",    
-    "ALLUPPERCASE1!",    
-    "NoNumber!",         
-    "NoSpecial123", ])     
+@pytest.mark.parametrize("weak_passwd",["short",
+    "alllowercase1!",
+    "ALLUPPERCASE1!",
+    "NoNumber!",
+    "NoSpecial123", ])
 
 def test_register_weak_password (weak_passwd,client,fake_redis,mock_send_otp):
     payload = {
@@ -166,10 +166,10 @@ def test_register_returns_user_not_verified_by_default(client,fake_redis,mock_se
         "mobile_no": "9999999999",
         "password": "Test@1234",
     }
-    
+
     r=client.post("/auth/register",json=payload)
     user=User.query.filter_by(email="rahul@example.com").first()
-    assert user.is_verified==False
+    assert not user.is_verified
     assert r.status_code==201
 
 
@@ -183,9 +183,9 @@ def test_register_stores_otp_in_redis(client,fake_redis,mock_send_otp):
         "mobile_no": "9999999999",
         "password": "Test@1234",
     }
-    
+
     r=client.post("/auth/register",json=payload)
-    user=User.query.filter_by(email="rahul@example.com").first()
+    User.query.filter_by(email="rahul@example.com").first()
     assert fake_redis.get(f"otp:verification:{email}") is not None
     assert r.status_code==201
 
@@ -228,8 +228,8 @@ def test_register_sends_otp_email(client, fake_redis, mock_send_otp):
     assert ttl > 0
     assert ttl <= 300
     mock_send_otp.assert_called_once()
-    mock_send_otp.call_args[0][0] == "rahul@example.com"
-    mock_send_otp.call_args[1]["purpose"] == "verification"
+    assert mock_send_otp.call_args[0][0] == "rahul@example.com"
+    assert mock_send_otp.call_args[1]["purpose"] == "verification"
 
 @pytest.mark.integration
 def test_register_email_contains_otp(client, fake_redis, mock_send_otp):

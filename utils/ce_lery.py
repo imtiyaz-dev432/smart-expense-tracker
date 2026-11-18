@@ -12,7 +12,7 @@ def make_celery(app):
             return self.run(*args,**kwargs)
     celery_app=Celery(
         app.import_name,
-        broker=app.config.get("CELERY_BROKER_URL",   
+        broker=app.config.get("CELERY_BROKER_URL",
             "redis://localhost:6379/1"
         ),
         backend=app.config.get(
@@ -21,6 +21,6 @@ def make_celery(app):
         ),
         task_cls=FlaskTask,
         include=["utils.otp"]
-    )        
+    )
     celery_app.conf.timezone='Asia/Kolkata'
     return celery_app
