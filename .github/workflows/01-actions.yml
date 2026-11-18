@@ -74,10 +74,10 @@ jobs:
 
       - name: Run pytest with service containers
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgresql://postgres:Pokemon Game098@localhost/test_db
           REDIS_URL: redis://localhost:6379/0
           FLASK_ENV: testing
-          JWT_SECRET_KEY: ${{ secrets.TEST_JWT_SECRET_KEY }}
+          JWT_SECRET_KEY: 8717954235-pokemon-kkkoop
         run: pytest -v
 
   docker:
