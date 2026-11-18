@@ -61,11 +61,14 @@ def mock_send_otp(monkeypatch):
 
 @pytest.fixture
 def seed_otp(fake_redis):
-    def _seed(identifier,otp="654321",ttl=300):
-        fake_redis.set(f"otp:verification:{identifier}",ttl,str(hash_otp(otp)))
+    def _seed(identifier, otp="654321", ttl=300):
+        fake_redis.set(
+            f"otp:verification:{identifier}",
+            str(hash_otp(otp)),
+            ex=ttl
+        )
         return otp
     return _seed
-
 
 @pytest.fixture
 def make_unverified_user(database):
@@ -112,11 +115,14 @@ def login_get_token(make_verified_user,database,client):
 
 @pytest.fixture
 def seed_forgot_otp(fake_redis):
-    def _seed(identifier,otp="654321",ttl=300):
-        fake_redis.setex(f"otp:reset:{identifier}",ttl,str(hash_otp(otp)))
+    def _seed(identifier, otp="654321", ttl=300):
+        fake_redis.set(
+            f"otp:reset:{identifier}",
+            str(hash_otp(otp)),
+            ex=ttl
+        )
         return otp
     return _seed
-
 
 @pytest.fixture
 def make_valid_expense_payload():

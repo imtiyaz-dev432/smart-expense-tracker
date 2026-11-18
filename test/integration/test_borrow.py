@@ -276,7 +276,7 @@ def test_delete_borrow_success(login_get_token,make_valid_borrow_payload,client,
     body=r.get_json()
     assert body["success"] is True
     database.session.expire_all()
-    assert Borrow.query.get(borrow.id) is None
+    assert database.session.get(Borrow, borrow.id) is None
 
 
 @pytest.mark.integration
@@ -299,7 +299,7 @@ def test_delete_borrow_other_user(login_get_token,make_valid_borrow_payload,clie
     r=client.delete(f"/borrow/delete/{borrow.id}",headers={"Authorization":f"Bearer {token1}"})
     assert r.status_code==404
     database.session.expire_all()
-    assert Borrow.query.get(borrow.id) is not None
+    assert database.session.get(Borrow, borrow.id) is not None
 
 
 @pytest.mark.integration

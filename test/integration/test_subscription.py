@@ -220,7 +220,7 @@ def test_delete_subscription_success(login_get_token,client,database,make_valid_
     r=client.delete(f"/subscription/delete/{sub.id}",headers={"Authorization":f"Bearer {token}"})
     assert r.status_code==200
     database.session.expire_all()
-    assert Subscription.query.get(sub.id) is None
+    assert database.session.get(Subscription, sub.id) is None
 
 
 @pytest.mark.integration

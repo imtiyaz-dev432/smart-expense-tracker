@@ -1,5 +1,6 @@
 import pytest
 
+from dbms.db import db
 from models.income import Income
 
 
@@ -212,8 +213,7 @@ def test_update_income_other_user_404(
     assert r.status_code == 404
 
     database.session.expire_all()
-    assert Income.query.get(income.id).source == "A Salary"
-
+    assert db.session.get(Income, income.id).source == "A Salary"
 
 @pytest.mark.integration
 def test_success_with_delete(login_get_token,client,build_income_payload,database):
@@ -280,4 +280,4 @@ def test_delete_income_other_user_404(
     )
     assert r.status_code == 404
     database.session.expire_all()
-    assert Income.query.get(income.id) is not None
+    assert db.session.get(Income, income.id) is not None

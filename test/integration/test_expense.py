@@ -286,8 +286,7 @@ def test_delete_expense_success(
     assert r.get_json()["success"] is True
 
     database.session.expire_all()
-    assert Expense.query.get(expense_id) is None
-
+    assert database.session.get(Expense, expense_id) is None
 
 @pytest.mark.integration
 def test_delete_expense_not_found_404(client, database, login_get_token):
@@ -323,8 +322,7 @@ def test_delete_other_user_expense_404(
     assert r.status_code == 404
 
     database.session.expire_all()
-    assert Expense.query.get(exp.id) is not None
-
+    assert database.session.get(Expense, exp.id) is not None
 
 @pytest.mark.integration
 def test_delete_expense_without_auth_401(
