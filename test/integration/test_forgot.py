@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.mark.integration
 def test_forgot_with_email(
     make_verified_user,
