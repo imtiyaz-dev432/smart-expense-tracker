@@ -74,10 +74,10 @@ jobs:
 
       - name: Run pytest with service containers
         env:
-          DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           REDIS_URL: redis://localhost:6379/0
           FLASK_ENV: testing
-          JWT_SECRET_KEY: ci-test-secret-key
+          JWT_SECRET_KEY: ${{ secrets.TEST_JWT_SECRET_KEY }}
         run: pytest -v
 
   docker:
