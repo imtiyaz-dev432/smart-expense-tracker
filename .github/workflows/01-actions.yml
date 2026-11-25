@@ -1,0 +1,175 @@
+name: 01-workflow-of-expense-tracker
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main    
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Lint Check
+        run: ruff check .
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser -d testdb"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-mock
+
+      - name: Run pytest with service containers
+        env:
+          DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+          TEST_DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+          TEST_JWT_SECRET_KEY: ci-test-only-jwt-secret
+          JWT_SECRET_KEY: ci-test-only-jwt-secret
+          REDIS_URL: redis://localhost:6379/15
+        run: pytest -v
+
+  docker:
+    needs: [test, dependency-security, codeql]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t expense-tracker:ci .
+
+      - name: Run container smoke test
+        run: |
+          docker network create expense-tracker-net
+
+          docker run -d \
+            --name expense-tracker-redis \
+            --network expense-tracker-net \
+            --network-alias redis \
+            redis:7-alpine
+
+          echo "Waiting for Redis..."
+
+          for i in {1..20}; do
+            if docker exec expense-tracker-redis redis-cli ping 2>/dev/null | grep -q PONG; then
+              echo "Redis is ready!"
+              break
+            fi
+            sleep 1
+          done
+
+          docker exec expense-tracker-redis redis-cli ping | grep -q PONG
+
+          docker run -d \
+            --name expense-tracker-test \
+            --network expense-tracker-net \
+            -p 5000:5000 \
+            -e DATABASE_URL="sqlite:///:memory:" \
+            -e JWT_SECRET_KEY="ci-smoke-jwt-key-change-this-to-at-least-32-bytes" \
+            -e REDIS_URL="redis://redis:6379/15" \
+            -e CELERY_BROKER_URL="redis://redis:6379/1" \
+            -e CELERY_BACKEND_URL="redis://redis:6379/2" \
+            expense-tracker:ci
+
+          sleep 5
+
+          echo "===== CONTAINER STATUS ====="
+          docker ps -a
+
+          echo "===== APPLICATION LOGS ====="
+          docker logs expense-tracker-test || true
+
+          STATUS=$(docker inspect -f '{{.State.Status}}' expense-tracker-test)
+
+          if [ "$STATUS" != "running" ]; then
+            echo "Application container crashed!"
+            exit 1
+          fi
+
+          docker stop expense-tracker-test
+  dependency-security:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Audit dependencies
+        run: pip-audit -r requirements.txt
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Initialize Codeql
+        uses: github/codeql-action/init@v4
+        with:
+          languages: python
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4

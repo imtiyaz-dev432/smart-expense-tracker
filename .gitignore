@@ -1,0 +1,16 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+instance/
+node_modules/
+.coverage
+htmlcov/
+.pytest_cache/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.*
+!.env.example

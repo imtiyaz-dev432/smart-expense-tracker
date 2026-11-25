@@ -1,0 +1,1111 @@
+{
+  "info": {
+    "name": "Smart Expense Tracker API",
+    "description": "Postman collection for Smart Expense Tracker Backend APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:5000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"mobile_no\": \"9999999999\",\n  \"password\": \"test12345\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"test12345\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 OTP",
+      "item": [
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile_no\": \"9999999999\",\n  \"otp\": \"123456\",\n  \"type\": \"register\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/otp/verify-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "otp",
+                "verify-otp"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Resend OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile_no\": \"9999999999\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/otp/resend-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "otp",
+                "resend-otp"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Forgot Password",
+      "item": [
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"test@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "forgot-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"test@example.com\",\n  \"otp\": \"123456\",\n  \"new_password\": \"newtest12345\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reset-password"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Income",
+      "item": [
+        {
+          "name": "Add Income",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"Salary\",\n  \"amount\": 30000,\n  \"description\": \"Monthly salary\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/income/add",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "income",
+                "add"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Income",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/income/all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "income",
+                "all"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Income",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"Freelancing\",\n  \"amount\": 12000,\n  \"description\": \"Website project payment\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/income/update/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "income",
+                "update",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Income",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/income/delete/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "income",
+                "delete",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Expense",
+      "item": [
+        {
+          "name": "Add Expense",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Cricket Bat\",\n  \"amount\": 655,\n  \"category\": \"Sports\",\n  \"description\": \"Bought cricket bat\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/expense",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "expense"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Expenses",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/expense/all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "expense",
+                "all"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Expense",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 950\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/expense/update/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "expense",
+                "update",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Expense",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/expense/delete/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "expense",
+                "delete",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Category",
+      "item": [
+        {
+          "name": "Add Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Gym\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/category",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "category"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Loan",
+      "item": [
+        {
+          "name": "Add Loan",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loan_name\": \"Bike Loan\",\n  \"total_amount\": 50000,\n  \"monthly_emi\": 5000,\n  \"remaining_amount\": 50000,\n  \"due_date\": \"2026-05-20\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/loan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Loans",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/loan/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loan",
+                "get"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Loan",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loan_name\": \"Bike Loan Updated\",\n  \"monthly_emi\": 4500,\n  \"remaining_amount\": 45000,\n  \"due_date\": \"2026-06-10\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/loan/update/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loan",
+                "update",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Loan",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/loan/delete/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loan",
+                "delete",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Loan Repayment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paid_amount\": 5000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/loan/repayment/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "loan",
+                "repayment",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Borrow Lend",
+      "item": [
+        {
+          "name": "Add Borrow Lend",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"person_name\": \"Aman\",\n  \"amount\": 1000,\n  \"type\": \"lent\",\n  \"due_date\": \"2026-06-20\",\n  \"note\": \"Money lent to friend\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/borrow/add",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow",
+                "add"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Borrow Lend",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/borrow/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow",
+                "get"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Borrow Lend",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1200\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/borrow/update/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow",
+                "update",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Borrow Lend",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/borrow/delete/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow",
+                "delete",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark Borrow Lend Paid",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "url": {
+              "raw": "{{base_url}}/borrow/mark-paid/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow",
+                "mark-paid",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Subscription",
+      "item": [
+        {
+          "name": "Add Subscription",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Netflix\",\n  \"amount\": 499,\n  \"billing_cycle\": \"monthly\",\n  \"next_billing_date\": \"2026-06-15\",\n  \"note\": \"OTT subscription\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subscription/add",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscription",
+                "add"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Subscriptions",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/subscription/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscription",
+                "get"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Subscription",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Netflix Premium\",\n  \"amount\": 649\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subscription/update/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscription",
+                "update",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Subscription",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/subscription/delete/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscription",
+                "delete",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Upcoming Subscriptions",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/subscription/upcoming",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscription",
+                "upcoming"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Dashboard",
+      "item": [
+        {
+          "name": "Dashboard Summary",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Category Wise Expense",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dashboard/category-wise-expense",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard",
+                "category-wise-expense"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Monthly Report",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dashboard/monthly-report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard",
+                "monthly-report"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 AI Suggestions",
+      "item": [
+        {
+          "name": "AI Suggestions",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/ai/suggestion",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ai",
+                "suggestion"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
